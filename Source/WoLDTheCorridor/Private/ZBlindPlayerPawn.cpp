@@ -78,6 +78,30 @@ void AZBlindPlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 }
 
 
+void AZBlindPlayerPawn::MoveForward(float Value)
+{
+	if (Value != 0.f)
+	{
+		const FRotator YawRotation(0.f, Controller->GetControlRotation().Yaw, 0.f);
+		const FVector Direction(FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X));
+
+		AddMovementInput(Direction, Value);
+	}
+}
+
+
+void AZBlindPlayerPawn::MoveRight(float Value)
+{
+	if (Value != 0.f)
+	{
+		const FRotator YawRotation(0.f, Controller->GetControlRotation().Yaw, 0.f);
+		const FVector Direction(FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y));
+
+		AddMovementInput(Direction, Value);
+	}
+}
+
+
 float AZBlindPlayerPawn::CalculateSpeed() const
 {
 	FVector Velocity = GetVelocity();

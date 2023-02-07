@@ -49,6 +49,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ETurningInPlace TurningInPlace;
 
+	/**
+	 * Player Input
+	 * 
+	 */
+	UFUNCTION(BlueprintCallable)
+	void MoveForward(float Value);
+
+	UFUNCTION(BlueprintCallable)
+	void MoveRight(float Value);
 
 
 
