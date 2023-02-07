@@ -3,13 +3,25 @@
 
 #include "ZBlindPlayerPawn.h"
 
+// Engine Includes
+#include "Camera/CameraComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+
+
+// Game Includes
+
+
 
 // Sets default values
 AZBlindPlayerPawn::AZBlindPlayerPawn()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	FirstPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
+	FirstPersonCamera->SetupAttachment(GetCapsuleComponent());
+
 
 	TurningInPlace = ETurningInPlace::ETIP_NotTurning;
 }
