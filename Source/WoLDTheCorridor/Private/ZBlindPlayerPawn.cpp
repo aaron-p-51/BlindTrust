@@ -7,6 +7,11 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Subsystems/Subsystem.h"
+#include "Subsystems/LocalPlayerSubsystem.h"
+#include "EnhancedInputSubsystems.h"
+#include "InputMappingContext.h"
+#include "EnhancedInputComponent.h"
 
 
 // Game Includes
@@ -30,6 +35,17 @@ AZBlindPlayerPawn::AZBlindPlayerPawn()
 void AZBlindPlayerPawn::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			Subsystem->AddMappingContext(InputMapping.Get(), 0);
+		}
+	}
+	
+
+	
 	
 }
 
@@ -75,6 +91,11 @@ void AZBlindPlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	if (UEnhancedInputComponent* Input = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		Input->BindAction(IA_MoveAction, ETriggerEvent::Triggered, this, &AZBlindPlayerPawn::Move);
+	}
+
 }
 
 
@@ -101,6 +122,15 @@ void AZBlindPlayerPawn::MoveRight(float Value)
 	}
 }
 
+
+void AZBlindPlayerPawn::Move(const FInputActionValue& Value)
+{
+	const bool CurrentValue = Value.Get<bool>();
+	if (CurrentValue)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("IA_Move triggered"));
+	}
+}
 
 float AZBlindPlayerPawn::CalculateSpeed() const
 {
