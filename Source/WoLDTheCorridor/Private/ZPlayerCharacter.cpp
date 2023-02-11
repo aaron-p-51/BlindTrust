@@ -7,6 +7,8 @@
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
 
+#include "ZSecurityCameraController.h"
+
 // Sets default values
 AZPlayerCharacter::AZPlayerCharacter()
 {
@@ -27,6 +29,11 @@ void AZPlayerCharacter::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("LocalPlayer: %s"), *LocalPlayer->GetName());
 	}
 
+	if (IsLocallyControlled())
+	{
+		AddMappingContext(DefaultInputMapping);
+	}
+
 }
 
 
@@ -35,10 +42,7 @@ void AZPlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (IsLocallyControlled())
-	{
-		AddMappingContext(DefaultInputMapping);
-	}
+
 
 }
 
@@ -52,6 +56,8 @@ void AZPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	{
 		Input->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AZPlayerCharacter::Move);
 		Input->BindAction(IA_Look, ETriggerEvent::Triggered, this, &AZPlayerCharacter::Look);
+		Input->BindAction(IA_SwitchCamera, ETriggerEvent::Triggered, this, &AZPlayerCharacter::SwitchCamera);
+		Input->BindAction(IA_RotateCamera, ETriggerEvent::Triggered, this, &AZPlayerCharacter::RotateCamera);
 	}
 
 }
@@ -65,7 +71,7 @@ void AZPlayerCharacter::AddMappingContext(TSoftObjectPtr<UInputMappingContext> C
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
-			Subsystem->AddMappingContext(Context.Get(), Priority);
+			Subsystem->AddMappingContext(Context.LoadSynchronous(), Priority);
 		}
 	}
 }
@@ -96,10 +102,8 @@ void AZPlayerCharacter::Move(const FInputActionValue& Value)
 		AddMovementInput(DirectionForward, CurrentValue.Y);
 
 		const FVector DirectionRight(FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y));
-		AddMovementInput(DirectionForward, CurrentValue.X);
+		AddMovementInput(DirectionRight, CurrentValue.X);
 	}
-
-
 }
 
 
@@ -116,4 +120,47 @@ void AZPlayerCharacter::Look(const FInputActionValue& Value)
 		AddControllerPitchInput(-CurrentValue.Y);
 	}
 }
+
+
+void AZPlayerCharacter::SwitchCamera(const FInputActionValue& Value)
+{
+
+}
+
+
+void AZPlayerCharacter::RotateCamera(const FInputActionValue& Value)
+{
+
+}
+
+
+void AZPlayerCharacter::AddSecurityCameraControlMappingInput()
+{
+	AddMappingContext(SecurityCameraControlMapping, 0);
+}
+
+
+void AZPlayerCharacter::RemoveSecurityCameraControlMappingInput()
+{
+	RemoveMappingContext(SecurityCameraControlMapping);
+}
+
+
+void AZPlayerCharacter::SetSecurityCameraController(AZSecurityCameraController* Value)
+{
+	if (Value)
+	{
+		SecurityCameraController = Value;
+		AddMappingContext(SecurityCameraControlMapping, 1);
+		UE_LOG(LogTemp, Warning, TEXT("SetSecurityCameraController"));
+	}
+	else
+	{
+		SecurityCameraController = nullptr;
+		RemoveMappingContext(SecurityCameraControlMapping);
+		UE_LOG(LogTemp, Warning, TEXT("RemoveSecurityCameraController"));
+	}
+}
+
+
 

@@ -9,6 +9,7 @@
 #include "Materials/MaterialInstanceDynamic.h"
 
 #include "ZSecurityCamera.h"
+#include "ZPlayerCharacter.h"
 
 // Sets default values
 AZSecurityCameraController::AZSecurityCameraController()
@@ -34,31 +35,31 @@ AZSecurityCameraController::AZSecurityCameraController()
 	bIsSwitchingCameras = false;
 }
 
+
 // Called when the game starts or when spawned
 void AZSecurityCameraController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	for (const auto& SecurityCamera : SecurityCameras)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("SecurityCamera: %s"), *SecurityCamera->GetName());
-	}
-	
 	MonitorScreenDynInstance = UMaterialInstanceDynamic::Create(MonitorScreen->GetMaterial(0), this);
 
 	SetInitialCamera();
+
+	if (InteractionVolume)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Here"));
+		InteractionVolume->OnComponentBeginOverlap.AddDynamic(this, &AZSecurityCameraController::OnInteractionVolumeBeginOverlap);
+		InteractionVolume->OnComponentEndOverlap.AddDynamic(this, &AZSecurityCameraController::OnInteractionVolumeEndOverlap);
+	}
 }
+
 
 // Called every frame
 void AZSecurityCameraController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	
-
 }
-
-
 
 
 void AZSecurityCameraController::SetInitialCamera()
@@ -106,4 +107,22 @@ void AZSecurityCameraController::SwitchPreviousCamera()
 		MoveCameraToCurrentSecurityCamera();
 	}
 }
+
+
+void AZSecurityCameraController::OnInteractionVolumeBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (AZPlayerCharacter* ZPlayerCharacter = Cast<AZPlayerCharacter>(OtherActor))
+	{
+		ZPlayerCharacter->SetSecurityCameraController(this);
+	}
+}
+
+void AZSecurityCameraController::OnInteractionVolumeEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (AZPlayerCharacter* ZPlayerCharacter = Cast<AZPlayerCharacter>(OtherActor))
+	{
+		ZPlayerCharacter->SetSecurityCameraController(nullptr);
+	}
+}
+
 

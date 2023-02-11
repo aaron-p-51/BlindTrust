@@ -37,6 +37,7 @@ protected:
 	UPROPERTY()
 	AZSecurityCamera* CurrentSecurityCamera;
 
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -46,6 +47,12 @@ public:
 
 private:
 
+	UFUNCTION()
+	void OnInteractionVolumeBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnInteractionVolumeEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
 	UPROPERTY()
 	class UMaterialInstanceDynamic* MonitorScreenDynInstance;
 
@@ -54,6 +61,8 @@ private:
 	void SetInitialCamera();
 
 	void MoveCameraToCurrentSecurityCamera();
+
+
 
 
 };
