@@ -11,6 +11,8 @@
 #include "ZSecurityCamera.h"
 #include "ZPlayerCharacter.h"
 
+const FName SHOW_STATIC_PARAM = FName("ShowStatic");
+
 // Sets default values
 AZSecurityCameraController::AZSecurityCameraController()
 {
@@ -41,13 +43,16 @@ void AZSecurityCameraController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	MonitorScreenDynInstance = UMaterialInstanceDynamic::Create(MonitorScreen->GetMaterial(0), this);
+	//MonitorScreenDynInstance = UMaterialInstanceDynamic::Create(MonitorScreen->GetMaterial(0), MonitorScreen);
+	
+	MonitorScreenMaterialBase = MonitorScreen->GetMaterial(0);
+	MonitorScreenDynInstance = UMaterialInstanceDynamic::Create(MonitorScreenMaterialBase, this);
+	MonitorScreen->SetMaterial(0, MonitorScreenDynInstance);
 
 	SetInitialCamera();
 
 	if (InteractionVolume)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Here"));
 		InteractionVolume->OnComponentBeginOverlap.AddDynamic(this, &AZSecurityCameraController::OnInteractionVolumeBeginOverlap);
 		InteractionVolume->OnComponentEndOverlap.AddDynamic(this, &AZSecurityCameraController::OnInteractionVolumeEndOverlap);
 	}
@@ -59,6 +64,10 @@ void AZSecurityCameraController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (Camera && CurrentSecurityCamera)
+	{
+		Camera->SetWorldRotation(CurrentSecurityCamera->GetCameraRotation());
+	}
 }
 
 
@@ -76,36 +85,28 @@ void AZSecurityCameraController::MoveCameraToCurrentSecurityCamera()
 {
 	FVector CameraLocation;
 	FRotator CameraRotation;
-	if (CurrentSecurityCamera->GetCameraLocationAndRotation(CameraLocation, CameraRotation))
+	if (CurrentSecurityCamera && CurrentSecurityCamera->GetCameraLocationAndRotation(CameraLocation, CameraRotation))
 	{
 		Camera->SetWorldLocationAndRotation(CameraLocation, CameraRotation);
 	}
 }
 
 
-void AZSecurityCameraController::SwitchNextCamera()
+void AZSecurityCameraController::ShowStaticMonitorScreen(bool Value)
 {
-	if (SecurityCameras.Num() > 1)
+	if (MonitorScreenDynInstance)
 	{
-		const int32 CurrentSecurityCameraIndex = SecurityCameras.IndexOfByKey(CurrentSecurityCamera);
-		const int32 NextSecurityCameraIndex = (CurrentSecurityCameraIndex + 1) % SecurityCameras.Num();
-
-		CurrentSecurityCamera = SecurityCameras[NextSecurityCameraIndex];
-		MoveCameraToCurrentSecurityCamera();
+		float ShowStaticValue = Value ? 1.f : 0.f;
+		MonitorScreenDynInstance->SetScalarParameterValue(SHOW_STATIC_PARAM, ShowStaticValue);
 	}
 }
 
 
-void AZSecurityCameraController::SwitchPreviousCamera()
+void AZSecurityCameraController::SwitchCameraDelayComplete()
 {
-	if (SecurityCameras.Num() > 1)
-	{
-		const int32 CurrentSecurityCameraIndex = SecurityCameras.IndexOfByKey(CurrentSecurityCamera);
-		const int32 NextSecurityCameraIndex = (CurrentSecurityCameraIndex - 1 + SecurityCameras.Num()) % SecurityCameras.Num();
-
-		CurrentSecurityCamera = SecurityCameras[NextSecurityCameraIndex];
-		MoveCameraToCurrentSecurityCamera();
-	}
+	MoveCameraToCurrentSecurityCamera();
+	ShowStaticMonitorScreen(false);
+	bIsSwitchingCameras = false;
 }
 
 
@@ -117,6 +118,7 @@ void AZSecurityCameraController::OnInteractionVolumeBeginOverlap(UPrimitiveCompo
 	}
 }
 
+
 void AZSecurityCameraController::OnInteractionVolumeEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	if (AZPlayerCharacter* ZPlayerCharacter = Cast<AZPlayerCharacter>(OtherActor))
@@ -126,3 +128,72 @@ void AZSecurityCameraController::OnInteractionVolumeEndOverlap(UPrimitiveCompone
 }
 
 
+////////////////////////////////////////////////////
+//
+// Input
+//
+////////////////////////////////////////////////////
+void AZSecurityCameraController::SwitchNextCamera()
+{
+	if (!bIsSwitchingCameras && SecurityCameras.Num() > 1)
+	{
+		bIsSwitchingCameras = true;
+		
+		const int32 CurrentSecurityCameraIndex = SecurityCameras.IndexOfByKey(CurrentSecurityCamera);
+		const int32 NextSecurityCameraIndex = (CurrentSecurityCameraIndex + 1) % SecurityCameras.Num();
+
+		CurrentSecurityCamera = SecurityCameras[NextSecurityCameraIndex];
+
+		if (CameraSwitchDelay > 0.f)
+		{
+			ShowStaticMonitorScreen(true);
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle_SwitchCameraDelay, this, &AZSecurityCameraController::SwitchCameraDelayComplete, CameraSwitchDelay, false);
+		}
+		else
+		{
+			MoveCameraToCurrentSecurityCamera();
+		}
+	}
+}
+
+
+void AZSecurityCameraController::SwitchPreviousCamera()
+{
+	if (!bIsSwitchingCameras && SecurityCameras.Num() > 1)
+	{
+		bIsSwitchingCameras = true;
+
+		const int32 CurrentSecurityCameraIndex = SecurityCameras.IndexOfByKey(CurrentSecurityCamera);
+		const int32 NextSecurityCameraIndex = (CurrentSecurityCameraIndex - 1 + SecurityCameras.Num()) % SecurityCameras.Num();
+
+		CurrentSecurityCamera = SecurityCameras[NextSecurityCameraIndex];
+
+		if (CameraSwitchDelay > 0.f)
+		{
+			ShowStaticMonitorScreen(true);
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle_SwitchCameraDelay, this, &AZSecurityCameraController::SwitchCameraDelayComplete, CameraSwitchDelay, false);
+		}
+		else
+		{
+			MoveCameraToCurrentSecurityCamera();
+		}
+	}
+}
+
+
+void AZSecurityCameraController::AddCurrentCameraPitch(float Value)
+{
+	if (!bIsSwitchingCameras && CurrentSecurityCamera)
+	{
+		CurrentSecurityCamera->AddPitch(Value);
+	}
+}
+
+
+void AZSecurityCameraController::AddCurrentCameraYaw(float Value)
+{
+	if (!bIsSwitchingCameras && CurrentSecurityCamera)
+	{
+		CurrentSecurityCamera->AddYaw(Value);
+	}
+}

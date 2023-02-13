@@ -58,6 +58,7 @@ void AZPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		Input->BindAction(IA_Look, ETriggerEvent::Triggered, this, &AZPlayerCharacter::Look);
 		Input->BindAction(IA_SwitchCamera, ETriggerEvent::Triggered, this, &AZPlayerCharacter::SwitchCamera);
 		Input->BindAction(IA_RotateCamera, ETriggerEvent::Triggered, this, &AZPlayerCharacter::RotateCamera);
+		Input->BindAction(IA_RotateCamera, ETriggerEvent::Completed, this, &AZPlayerCharacter::RotateCamera);
 	}
 
 }
@@ -124,13 +125,30 @@ void AZPlayerCharacter::Look(const FInputActionValue& Value)
 
 void AZPlayerCharacter::SwitchCamera(const FInputActionValue& Value)
 {
-
+	if (SecurityCameraController)
+	{
+		const float CurrentValue = Value.Get<float>();
+		UE_LOG(LogTemp, Warning, TEXT("SwitchCamera: %f"), CurrentValue);
+		if (CurrentValue > 0.f)
+		{
+			SecurityCameraController->SwitchNextCamera();
+		}
+		else if (CurrentValue < 0.f)
+		{
+			SecurityCameraController->SwitchPreviousCamera();
+		}
+	}
 }
 
 
 void AZPlayerCharacter::RotateCamera(const FInputActionValue& Value)
 {
-
+	if (SecurityCameraController)
+	{
+		const FVector2D CurrentValue = Value.Get<FVector2D>();
+		SecurityCameraController->AddCurrentCameraPitch(CurrentValue.Y);
+		SecurityCameraController->AddCurrentCameraYaw(CurrentValue.X);
+	}
 }
 
 
@@ -151,7 +169,7 @@ void AZPlayerCharacter::SetSecurityCameraController(AZSecurityCameraController* 
 	if (Value)
 	{
 		SecurityCameraController = Value;
-		AddMappingContext(SecurityCameraControlMapping, 1);
+		AddMappingContext(SecurityCameraControlMapping, 0);
 		UE_LOG(LogTemp, Warning, TEXT("SetSecurityCameraController"));
 	}
 	else
