@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "ZombieChaseTypes.h"
+#include "InputActionValue.h"
 #include "ZBlindPlayerPawn.generated.h"
 
 UCLASS()
@@ -26,6 +27,16 @@ protected:
 
 	 UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	 class UCameraComponent* FirstPersonCamera;
+
+	 // Expose a mapping context as a property in your header file...
+	 UPROPERTY(EditAnywhere, Category = "Input")
+	 TSoftObjectPtr<class UInputMappingContext> InputMapping;
+
+	 UPROPERTY(EditAnywhere, Category = "Input")
+	 class UInputAction* IA_MoveAction;
+
+	 
+
 
 public:	
 	// Called every frame
@@ -59,7 +70,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void MoveRight(float Value);
 
+	
 
+	void Move(const FInputActionValue& Value);
 
 private:
 
