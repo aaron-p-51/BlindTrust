@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "ZSecurityCameraBase.h"
 #include "ZSecurityCameraController.generated.h"
 
 UCLASS()
-class WOLDTHECORRIDOR_API AZSecurityCameraController : public AActor
+class WOLDTHECORRIDOR_API AZSecurityCameraController : public AZSecurityCameraBase
 {
 	GENERATED_BODY()
 	
@@ -22,19 +23,10 @@ protected:
 	/**
 	 * Components
 	 */
-	UPROPERTY(EditDefaultsOnly)
-	class USceneComponent* Root;
 
 	/** Interaction volume for player to use SecurityCameraController. */
 	UPROPERTY(EditDefaultsOnly)
 	class UBoxComponent* InteractionVolume;
-
-	UPROPERTY(EditDefaultsOnly)
-	class UStaticMeshComponent* MonitorScreen;
-
-	UPROPERTY(EditDefaultsOnly)
-	class USceneCaptureComponent2D* Camera;
-
 
 	/**
 	 * Config
@@ -82,14 +74,6 @@ private:
 	/** Inform Player Pawn they are no longer overlapping InteractionVolume */
 	UFUNCTION()
 	void OnInteractionVolumeEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
-	/** Material of MonitorScreen  */
-	UPROPERTY()
-	class UMaterialInterface* MonitorScreenMaterialBase;
-
-	/** Material Instance, show video static while switching cameras */
-	UPROPERTY()
-	class UMaterialInstanceDynamic* MonitorScreenDynInstance;
 
 	/** Set camera component position and rotation to first index of SecurityCameras camera */
 	void SetInitialCamera();

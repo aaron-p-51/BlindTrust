@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "ZSecurityCameraBase.h"
 #include "ZSecurityCamera.generated.h"
 
 UCLASS()
-class WOLDTHECORRIDOR_API AZSecurityCamera : public AActor
+class WOLDTHECORRIDOR_API AZSecurityCamera : public AZSecurityCameraBase
 {
 	GENERATED_BODY()
 	
@@ -20,55 +21,39 @@ protected:
 	virtual void BeginPlay() override;
 
 	/**
-	 * Components
-	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
-	class USceneComponent* Root;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
-	class UStaticMeshComponent* MonitorScreen;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
-	class USceneCaptureComponent2D* Camera;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
-	UStaticMeshComponent* CameraMount;
-
-	/**
 	 * Configuration
 	 */
 	 /** Min Camera pitch in local space. To avoid gimble lock value will be locked to -70 <= x <= 70 if set outside these values */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Pitch Rotation", meta = (ClampMin = "-70.0", ClampMax = "70.0", UIMin = "-70.0", UIMax = "70.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Pitch", meta = (ClampMin = "-89.0", ClampMax = "89.0", UIMin = "-89.0", UIMax = "89.0"))
 	float MinCameraPitch;
 
 	/** Max Camera pitch in local space. To avoid gimble lock value will be locked to -70 <= x <= 70 if set outside these values */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Pitch Rotation", meta = (ClampMin = "-70.0", ClampMax = "70.0", UIMin = "-70.0", UIMax = "70.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Pitch", meta = (ClampMin = "-89.0", ClampMax = "89.0", UIMin = "-89.0", UIMax = "89.0"))
 	float MaxCameraPitch;
 
 	/** Speed at which camera pitch will change after full input is applied. Higher values will change pitch faster. Default is 1 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Pitch Rotation", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Pitch", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float PitchMoveSpeed;
 
 	/** Interpolation speed for full PitchMoveSpeed to be applied. Higher values will result in the pitch rotation rate reaching PitchMoveSpeed faster */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Pitch Rotation", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Pitch", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float PitchInterpSpeed;
 
 	/** Min Camera Yaw in local space. To avoid gimble lock value will be locked to -70 <= x <= 70 if set outside these values */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Pitch Rotation", meta = (ClampMin = "-70.0", ClampMax = "70.0", UIMin = "-70.0", UIMax = "70.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Yaw", meta = (ClampMin = "-89.0", ClampMax = "89.0", UIMin = "-89.0", UIMax = "89.0"))
 	float MinCameraYaw;
 
 	/** Max Camera Yaw in local space. To avoid gimble lock value will be locked to -70 <= x <= 70 if set outside these values */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Pitch Rotation", meta = (ClampMin = "-70.0", ClampMax = "70.0", UIMin = "-70.0", UIMax = "70.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Yaw", meta = (ClampMin = "-89.0", ClampMax = "89.0", UIMin = "-89.0", UIMax = "89.0"))
 	float MaxCameraYaw;
 
 	/** Speed at which camera yaw will change after full input is applied. Higher values will change pitch faster. Default is 1 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Pitch Rotation", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Yaw", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float YawMoveSpeed;
 
 	/** Interpolation speed for full YawMoveSpeed to be applied. Higher values will result in the yaw rotation rate reaching YawMoveSpeed faster */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Pitch Rotation", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Yaw", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float YawInterpSpeed;
-
 
 
 private:
@@ -99,10 +84,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	bool GetCameraLocationAndRotation(FVector& Location, FRotator& Rotation) const;
-
-	FRotator GetCameraRotation() const;
-
+	
+	/**
+	 * Input
+	 */
 	FORCEINLINE void AddPitch(float Value) { PitchInput = Value; }
 	FORCEINLINE void AddYaw(float Value) { YawInput = Value; }
 
