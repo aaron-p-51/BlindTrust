@@ -8,7 +8,7 @@
 
 void AZLobbyPlayerController::TravelToGameMap()
 {
-	GetWorld()->ServerTravel(FString("/Game/ZombieChase/Maps/TestGameLevel?listen"));
+	GetWorld()->ServerTravel(FString("/Game/ZombieChase/Maps/LANTestLevel?listen"));
 }
 
 

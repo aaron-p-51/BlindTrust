@@ -27,6 +27,7 @@ public:
 	void SetPlayerType(int32 PlayerId, EPlayerType PlayerType);
 	EPlayerType GetPlayerType(int32 PlayerId) const;
 
+
 private:
 
 	TMap<int32, EPlayerType> PlayerTypes;
