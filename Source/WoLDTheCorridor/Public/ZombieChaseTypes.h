@@ -9,3 +9,12 @@ enum class ETurningInPlace : uint8
 
 	ETIP_MAX		UMETA(DisplayName = "DefaultMAX")
 };
+
+UENUM(BlueprintType)
+enum  class EPlayerType : uint8
+{
+	EPT_BlindPlayer		UMETA(DisplayName = "BlindPlayer"),
+	EPT_GuidePlayer		UMETA(DisplayName = "GuidePlayer"),
+
+	EPT_MAX				UMETA(DisplayName = "DefaultMax")
+};

@@ -5,24 +5,15 @@
 
 #include "Components/StaticMeshComponent.h"
 #include "Components/SceneCaptureComponent2D.h"
+#include "Materials/MaterialInstanceDynamic.h"
+
+const FName VFX_LINE_SPEED_PARAM = FName("VFXLineSpeed");
 
 // Sets default values
 AZSecurityCamera::AZSecurityCamera()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
-	SetRootComponent(Root);
-
-	MonitorScreen = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MonitorScreen"));
-	MonitorScreen->SetupAttachment(GetRootComponent());
-
-	CameraMount = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CameraMount"));
-	CameraMount->SetupAttachment(GetRootComponent());
-
-	Camera = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("Camera"));
-	Camera->SetupAttachment(CameraMount);
 
 	MinCameraPitch = -70.f;
 	MaxCameraPitch = 70.f;
@@ -48,14 +39,14 @@ void AZSecurityCamera::BeginPlay()
 void AZSecurityCamera::ValidateInstanceValues()
 {
 	// Validate Pitch values set for instances of this class
-	if (MinCameraPitch < -70.f || MinCameraPitch > 70.f)
+	if (MinCameraPitch < -89.f || MinCameraPitch > 89.f)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%s Has invalid MinCameraPitch: %f, will set to -70.0"), *GetName(), MinCameraPitch);
+		UE_LOG(LogTemp, Warning, TEXT("%s Has invalid MinCameraPitch: %f, will set to -89.0"), *GetName(), MinCameraPitch);
 		MinCameraPitch = -89.f;
 	}
-	if (MaxCameraPitch < -70.f || MaxCameraPitch > 70.f)
+	if (MaxCameraPitch < -89.f || MaxCameraPitch > 89.f)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%s Has invalid MaxCameraPitch: %f, will set to 70.0"), *GetName(), MaxCameraPitch);
+		UE_LOG(LogTemp, Warning, TEXT("%s Has invalid MaxCameraPitch: %f, will set to 89.0"), *GetName(), MaxCameraPitch);
 		MaxCameraPitch = -89.f;
 	}
 	if (MinCameraPitch > MaxCameraPitch)
@@ -66,12 +57,12 @@ void AZSecurityCamera::ValidateInstanceValues()
 	// Validate yaw values set for instances of this class
 	if (MinCameraYaw < -89.f || MinCameraYaw > 89.f)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%s Has invalid MinCameraYaw: %f, will set -70.0"), *GetName(), MinCameraYaw);
+		UE_LOG(LogTemp, Warning, TEXT("%s Has invalid MinCameraYaw: %f, will set -89.0"), *GetName(), MinCameraYaw);
 		MinCameraYaw = -89.f;
 	}
 	if (MaxCameraYaw < -89.f || MaxCameraYaw > 89.f)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%s Has invalid MaxCameraYaw: %f, will set 70.0"), *GetName(), MaxCameraYaw);
+		UE_LOG(LogTemp, Warning, TEXT("%s Has invalid MaxCameraYaw: %f, will set 89.0"), *GetName(), MaxCameraYaw);
 		MaxCameraYaw = -89.f;
 	}
 	if (MinCameraYaw > MaxCameraYaw)
@@ -107,10 +98,11 @@ void AZSecurityCamera::AddPitchInput(float DeltaTime)
 	{
 		CurrentInterpPitchInput = FMath::FInterpTo(CurrentInterpPitchInput, PitchInput * PitchMoveSpeed, DeltaTime, PitchInterpSpeed);
 		FRotator CombineRotation = Camera->GetComponentRotation() + FRotator(CurrentInterpPitchInput, 0.f, 0.f);
+		FRotator SlerpRotation = FQuat::Slerp(FQuat(Camera->GetRelativeRotation()), FQuat(CombineRotation), 1.f).Rotator();
 
-		if (CombineRotation.Pitch < CalculatedMaxPitch && CombineRotation.Pitch > CalculatedMinPitch)
+		if (SlerpRotation.Pitch < CalculatedMaxPitch && SlerpRotation.Pitch > CalculatedMinPitch)
 		{
-			Camera->SetWorldRotation(CombineRotation);			
+			Camera->SetWorldRotation(SlerpRotation);
 		}
 	}
 	else
@@ -122,14 +114,15 @@ void AZSecurityCamera::AddPitchInput(float DeltaTime)
 
 void AZSecurityCamera::AddYawInput(float DeltaTime)
 {
-	if (Camera && FMath::Abs(YawInput))
+	if (Camera && FMath::Abs(YawInput) > 0.f)
 	{
 		CurrentInterpYawInput = FMath::FInterpTo(CurrentInterpYawInput, YawInput * YawMoveSpeed, DeltaTime, YawInterpSpeed);
-		FRotator CombineRotation = Camera->GetComponentRotation() + FRotator(0.f, CurrentInterpYawInput, 0.f);
+		FRotator CombineRotation = Camera->GetRelativeRotation() + FRotator(0.f, CurrentInterpYawInput, 0.f);
+		FRotator SlerpRotation = FQuat::Slerp(FQuat(Camera->GetRelativeRotation()), FQuat(CombineRotation), 1.f).Rotator();
 
-		if (CombineRotation.Yaw < CalculatedMaxYaw && CombineRotation.Yaw > CalculatedMinYaw)
+		if (SlerpRotation.Yaw < CalculatedMaxYaw && SlerpRotation.Yaw > CalculatedMinYaw)
 		{
-			Camera->SetWorldRotation(CombineRotation);
+			Camera->SetRelativeRotation(SlerpRotation);
 		}
 	}
 	else
@@ -139,26 +132,5 @@ void AZSecurityCamera::AddYawInput(float DeltaTime)
 }
 
 
-bool AZSecurityCamera::GetCameraLocationAndRotation(FVector& Location, FRotator& Rotation) const
-{
-	if (Camera)
-	{
-		Location = Camera->GetComponentLocation();
-		Rotation = Camera->GetComponentRotation();
-		return true;
-	}
 
-	return false;
-}
-
-
-FRotator AZSecurityCamera::GetCameraRotation() const
-{
-	if (Camera)
-	{
-		return Camera->GetComponentRotation();
-	}
-
-	return FRotator();
-}
 

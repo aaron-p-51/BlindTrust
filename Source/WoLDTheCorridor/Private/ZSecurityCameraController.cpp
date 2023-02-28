@@ -19,20 +19,11 @@ AZSecurityCameraController::AZSecurityCameraController()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
-	SetRootComponent(Root);
-
 	InteractionVolume = CreateDefaultSubobject<UBoxComponent>(TEXT("InteractionVolume"));
 	InteractionVolume->SetupAttachment(GetRootComponent());
 	InteractionVolume->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	InteractionVolume->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	InteractionVolume->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
-
-	MonitorScreen = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MonitorScreen"));
-	MonitorScreen->SetupAttachment(GetRootComponent());
-
-	Camera = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("Camera"));
-	Camera->SetupAttachment(GetRootComponent());
 
 	bIsSwitchingCameras = false;
 }
@@ -42,12 +33,6 @@ AZSecurityCameraController::AZSecurityCameraController()
 void AZSecurityCameraController::BeginPlay()
 {
 	Super::BeginPlay();
-
-	//MonitorScreenDynInstance = UMaterialInstanceDynamic::Create(MonitorScreen->GetMaterial(0), MonitorScreen);
-	
-	MonitorScreenMaterialBase = MonitorScreen->GetMaterial(0);
-	MonitorScreenDynInstance = UMaterialInstanceDynamic::Create(MonitorScreenMaterialBase, this);
-	MonitorScreen->SetMaterial(0, MonitorScreenDynInstance);
 
 	SetInitialCamera();
 

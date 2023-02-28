@@ -11,5 +11,7 @@ public class WoLDTheCorridorEditorTarget : TargetRules
 		DefaultBuildSettings = BuildSettingsVersion.V2;
 
 		ExtraModuleNames.AddRange( new string[] { "WoLDTheCorridor" } );
-	}
+
+        IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_1;
+    }
 }
