@@ -9,7 +9,7 @@
 #include "Materials/MaterialInstanceDynamic.h"
 
 #include "ZSecurityCamera.h"
-#include "ZPlayerCharacter.h"
+#include "ZGuidePlayerCharacter.h"
 
 const FName SHOW_STATIC_PARAM = FName("ShowStatic");
 
@@ -97,7 +97,7 @@ void AZSecurityCameraController::SwitchCameraDelayComplete()
 
 void AZSecurityCameraController::OnInteractionVolumeBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (AZPlayerCharacter* ZPlayerCharacter = Cast<AZPlayerCharacter>(OtherActor))
+	if (auto ZPlayerCharacter = Cast<AZGuidePlayerCharacter>(OtherActor))
 	{
 		ZPlayerCharacter->SetSecurityCameraController(this);
 	}
@@ -106,7 +106,7 @@ void AZSecurityCameraController::OnInteractionVolumeBeginOverlap(UPrimitiveCompo
 
 void AZSecurityCameraController::OnInteractionVolumeEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (AZPlayerCharacter* ZPlayerCharacter = Cast<AZPlayerCharacter>(OtherActor))
+	if (auto ZPlayerCharacter = Cast<AZGuidePlayerCharacter>(OtherActor))
 	{
 		ZPlayerCharacter->SetSecurityCameraController(nullptr);
 	}

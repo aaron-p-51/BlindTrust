@@ -22,6 +22,9 @@ public:
 
 	void SetHostPlayerType(EPlayerType PlayerType);
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly);
+	EPlayerType DefaultHostPlayerType = EPlayerType::EPT_GuidePlayer;
+
 public:
 
 	void SetPlayerType(int32 PlayerId, EPlayerType PlayerType);

@@ -6,6 +6,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
+#include "Camera/CameraComponent.h"
 
 #include "ZSecurityCameraController.h"
 
@@ -14,6 +15,11 @@ AZPlayerCharacter::AZPlayerCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	FirstPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
+	FirstPersonCamera->SetupAttachment(GetMesh());
+
+	bUseControllerRotationPitch = true;
 
 }
 
@@ -56,9 +62,9 @@ void AZPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	{
 		Input->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AZPlayerCharacter::Move);
 		Input->BindAction(IA_Look, ETriggerEvent::Triggered, this, &AZPlayerCharacter::Look);
-		Input->BindAction(IA_SwitchCamera, ETriggerEvent::Triggered, this, &AZPlayerCharacter::SwitchCamera);
-		Input->BindAction(IA_RotateCamera, ETriggerEvent::Triggered, this, &AZPlayerCharacter::RotateCamera);
-		Input->BindAction(IA_RotateCamera, ETriggerEvent::Completed, this, &AZPlayerCharacter::RotateCamera);
+		//Input->BindAction(IA_SwitchCamera, ETriggerEvent::Triggered, this, &AZPlayerCharacter::SwitchCamera);
+		//Input->BindAction(IA_RotateCamera, ETriggerEvent::Triggered, this, &AZPlayerCharacter::RotateCamera);
+		//Input->BindAction(IA_RotateCamera, ETriggerEvent::Completed, this, &AZPlayerCharacter::RotateCamera);
 	}
 
 }
@@ -123,62 +129,7 @@ void AZPlayerCharacter::Look(const FInputActionValue& Value)
 }
 
 
-void AZPlayerCharacter::SwitchCamera(const FInputActionValue& Value)
-{
-	if (SecurityCameraController)
-	{
-		const float CurrentValue = Value.Get<float>();
-		UE_LOG(LogTemp, Warning, TEXT("SwitchCamera: %f"), CurrentValue);
-		if (CurrentValue > 0.f)
-		{
-			SecurityCameraController->SwitchNextCamera();
-		}
-		else if (CurrentValue < 0.f)
-		{
-			SecurityCameraController->SwitchPreviousCamera();
-		}
-	}
-}
 
-
-void AZPlayerCharacter::RotateCamera(const FInputActionValue& Value)
-{
-	if (SecurityCameraController)
-	{
-		const FVector2D CurrentValue = Value.Get<FVector2D>();
-		SecurityCameraController->AddCurrentCameraPitch(CurrentValue.Y);
-		SecurityCameraController->AddCurrentCameraYaw(CurrentValue.X);
-	}
-}
-
-
-void AZPlayerCharacter::AddSecurityCameraControlMappingInput()
-{
-	AddMappingContext(SecurityCameraControlMapping, 0);
-}
-
-
-void AZPlayerCharacter::RemoveSecurityCameraControlMappingInput()
-{
-	RemoveMappingContext(SecurityCameraControlMapping);
-}
-
-
-void AZPlayerCharacter::SetSecurityCameraController(AZSecurityCameraController* Value)
-{
-	if (Value)
-	{
-		SecurityCameraController = Value;
-		AddMappingContext(SecurityCameraControlMapping, 0);
-		UE_LOG(LogTemp, Warning, TEXT("SetSecurityCameraController"));
-	}
-	else
-	{
-		SecurityCameraController = nullptr;
-		RemoveMappingContext(SecurityCameraControlMapping);
-		UE_LOG(LogTemp, Warning, TEXT("RemoveSecurityCameraController"));
-	}
-}
 
 
 

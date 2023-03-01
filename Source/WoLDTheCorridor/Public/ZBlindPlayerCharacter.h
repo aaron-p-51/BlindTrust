@@ -4,15 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "ZPlayerCharacter.h"
-#include "ZBlindPlayerPawn.generated.h"
+#include "ZBlindPlayerCharacter.generated.h"
 
+/**
+ * 
+ */
 UCLASS()
-class WOLDTHECORRIDOR_API AZBlindPlayerPawn : public AZPlayerCharacter
+class WOLDTHECORRIDOR_API AZBlindPlayerCharacter : public AZPlayerCharacter
 {
 	GENERATED_BODY()
-
-
-
-
-
+	
 };

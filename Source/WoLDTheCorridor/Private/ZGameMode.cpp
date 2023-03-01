@@ -43,10 +43,17 @@ void AZGameMode::PostLogin(APlayerController* NewPlayer)
 		if (UZGameInstance* ZGameInstance = Cast<UZGameInstance>(GetGameInstance()))
 		{
 			EPlayerType PlayerType = ZGameInstance->GetPlayerType(PlayerState->PlayerId);
-			APlayerStart* PlayerStart = GetPlayerStartForPlayerType(PlayerType);
-			if (PlayerStart)
+			if (PlayerType != EPlayerType::EPT_MAX)
 			{
-				RestartPlayerAtPlayerStart(NewPlayer, PlayerStart);
+				APlayerStart* PlayerStart = GetPlayerStartForPlayerType(PlayerType);
+				if (PlayerStart)
+				{
+					RestartPlayerAtPlayerStart(NewPlayer, PlayerStart);
+				}
+			}
+			else
+			{
+
 			}
 		}
 	}

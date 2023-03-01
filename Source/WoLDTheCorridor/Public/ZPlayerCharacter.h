@@ -21,6 +21,14 @@ protected:
 	virtual void BeginPlay() override;
 
 	/**
+	 * Components
+	 */
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
+	class UCameraComponent* FirstPersonCamera;
+
+
+	/**
 	 * Player Input
 	 */
 	UPROPERTY(EditAnywhere, Category = "Input")
@@ -36,21 +44,7 @@ protected:
 
 	void Look(const FInputActionValue& Value);
 
-	UPROPERTY(EditAnywhere, Category = "Input")
-	TSoftObjectPtr<class UInputMappingContext> SecurityCameraControlMapping;
-
-	UPROPERTY(EditAnywhere, Category = "Input")
-	class UInputAction* IA_SwitchCamera;
-
-	void SwitchCamera(const FInputActionValue& Value);
-
-	UPROPERTY(EditAnywhere, Category = "Input")
-	class UInputAction* IA_RotateCamera;
-
-	void RotateCamera(const FInputActionValue& Value);
-
-	UPROPERTY(VisibleAnywhere)
-	class AZSecurityCameraController* SecurityCameraController;
+	
 
 
 
@@ -61,12 +55,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	void AddSecurityCameraControlMappingInput();
-	void RemoveSecurityCameraControlMappingInput();
+	
 
-	void SetSecurityCameraController(AZSecurityCameraController* Value);
-
-private:
+protected:
 
 	void AddMappingContext(TSoftObjectPtr<UInputMappingContext> Context, int32 Priority = 0);
 	void RemoveMappingContext(TSoftObjectPtr<UInputMappingContext> Context);

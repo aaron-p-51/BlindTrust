@@ -24,5 +24,4 @@ EPlayerType UZGameInstance::GetPlayerType(int32 PlayerId) const
 	}
 
 	return EPlayerType::EPT_MAX;
-	//return EPlayerType::EPT_GuidePlayer;
 }
