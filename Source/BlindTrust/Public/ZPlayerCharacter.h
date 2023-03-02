@@ -8,7 +8,7 @@
 #include "ZPlayerCharacter.generated.h"
 
 UCLASS()
-class WOLDTHECORRIDOR_API AZPlayerCharacter : public ACharacter
+class BLINDTRUST_API AZPlayerCharacter : public ACharacter
 {
 	GENERATED_BODY()
 

@@ -9,7 +9,7 @@
 #include "ZBlindPlayerPawn.generated.h"
 
 UCLASS()
-class WOLDTHECORRIDOR_API AZBlindPlayerPawn : public ACharacter
+class BLINDTRUST_API AZBlindPlayerPawn : public ACharacter
 {
 	GENERATED_BODY()
 

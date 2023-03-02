@@ -3,14 +3,14 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
-public class WoLDTheCorridorEditorTarget : TargetRules
+public class BlindTrustEditorTarget : TargetRules
 {
-	public WoLDTheCorridorEditorTarget(TargetInfo Target) : base(Target)
+	public BlindTrustEditorTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Editor;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
 
-		ExtraModuleNames.AddRange( new string[] { "WoLDTheCorridor" } );
+		ExtraModuleNames.AddRange( new string[] { "BlindTrust" } );
 
         IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_1;
     }

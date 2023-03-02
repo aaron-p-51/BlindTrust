@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class WoLDTheCorridor : ModuleRules
+public class BlindTrust : ModuleRules
 {
-	public WoLDTheCorridor(ReadOnlyTargetRules Target) : base(Target)
+	public BlindTrust(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	

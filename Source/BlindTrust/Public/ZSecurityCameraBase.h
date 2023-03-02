@@ -7,7 +7,7 @@
 #include "ZSecurityCameraBase.generated.h"
 
 UCLASS()
-class WOLDTHECORRIDOR_API AZSecurityCameraBase : public AActor
+class BLINDTRUST_API AZSecurityCameraBase : public AActor
 {
 	GENERATED_BODY()
 	

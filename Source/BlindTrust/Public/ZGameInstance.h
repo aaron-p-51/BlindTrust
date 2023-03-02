@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class WOLDTHECORRIDOR_API UZGameInstance : public UGameInstance
+class BLINDTRUST_API UZGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 

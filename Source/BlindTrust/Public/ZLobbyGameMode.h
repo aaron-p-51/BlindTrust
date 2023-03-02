@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class WOLDTHECORRIDOR_API AZLobbyGameMode : public AGameModeBase
+class BLINDTRUST_API AZLobbyGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 

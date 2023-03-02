@@ -3,13 +3,13 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
-public class WoLDTheCorridorTarget : TargetRules
+public class BlindTrustTarget : TargetRules
 {
-	public WoLDTheCorridorTarget(TargetInfo Target) : base(Target)
+	public BlindTrustTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Game;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
 
-		ExtraModuleNames.AddRange( new string[] { "WoLDTheCorridor" } );
+		ExtraModuleNames.AddRange( new string[] { "BlindTrust" } );
 	}
 }

@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class WOLDTHECORRIDOR_API AZLobbyPlayerController : public APlayerController
+class BLINDTRUST_API AZLobbyPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
