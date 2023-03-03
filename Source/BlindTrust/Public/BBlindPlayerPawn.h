@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "ZombieChaseTypes.h"
+#include "BlindTrustTypes.h"
 #include "InputActionValue.h"
 #include "BBlindPlayerPawn.generated.h"
 

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
-#include "ZombieChaseTypes.h"
+#include "BlindTrustTypes.h"
 #include "BGameMode.generated.h"
 
 /**

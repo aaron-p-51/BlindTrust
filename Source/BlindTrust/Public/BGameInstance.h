@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "ZombieChaseTypes.h"
+#include "BlindTrustTypes.h"
 #include "BGameInstance.generated.h"
 
 /**
