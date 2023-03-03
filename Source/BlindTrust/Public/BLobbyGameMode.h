@@ -5,13 +5,13 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "ZombieChaseTypes.h"
-#include "ZLobbyGameMode.generated.h"
+#include "BLobbyGameMode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class BLINDTRUST_API AZLobbyGameMode : public AGameModeBase
+class BLINDTRUST_API ABLobbyGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 

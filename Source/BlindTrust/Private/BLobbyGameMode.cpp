@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ZLobbyGameMode.h"
+#include "BLobbyGameMode.h"
 #include "GameFramework/PlayerState.h"
 #include "BGameInstance.h"
 
-void AZLobbyGameMode::GetPlayerIds()
+void ABLobbyGameMode::GetPlayerIds()
 {
 	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
 	{
@@ -19,7 +19,7 @@ void AZLobbyGameMode::GetPlayerIds()
 }
 
 
-void AZLobbyGameMode::SetHostPlayerType(int32 HostPlayerId, EPlayerType HostPlayerType)
+void ABLobbyGameMode::SetHostPlayerType(int32 HostPlayerId, EPlayerType HostPlayerType)
 {
 	
 	// Set ClientPlayerType to what ever HostPlayerType is not
