@@ -5,13 +5,13 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 
-#include "ZLobbyPlayerController.generated.h"
+#include "BLobbyPlayerController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class BLINDTRUST_API AZLobbyPlayerController : public APlayerController
+class BLINDTRUST_API ABLobbyPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
