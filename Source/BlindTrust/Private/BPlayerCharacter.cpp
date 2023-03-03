@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ZPlayerCharacter.h"
+#include "BPlayerCharacter.h"
 
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
@@ -10,7 +10,7 @@
 #include "ZSecurityCameraController.h"
 
 // Sets default values
-AZPlayerCharacter::AZPlayerCharacter()
+ABPlayerCharacter::ABPlayerCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -19,7 +19,7 @@ AZPlayerCharacter::AZPlayerCharacter()
 
 
 // Called when the game starts or when spawned
-void AZPlayerCharacter::BeginPlay()
+void ABPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
@@ -38,7 +38,7 @@ void AZPlayerCharacter::BeginPlay()
 
 
 // Called every frame
-void AZPlayerCharacter::Tick(float DeltaTime)
+void ABPlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
@@ -48,23 +48,23 @@ void AZPlayerCharacter::Tick(float DeltaTime)
 
 
 // Called to bind functionality to input
-void AZPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ABPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	if (UEnhancedInputComponent* Input = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		Input->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AZPlayerCharacter::Move);
-		Input->BindAction(IA_Look, ETriggerEvent::Triggered, this, &AZPlayerCharacter::Look);
-		Input->BindAction(IA_SwitchCamera, ETriggerEvent::Triggered, this, &AZPlayerCharacter::SwitchCamera);
-		Input->BindAction(IA_RotateCamera, ETriggerEvent::Triggered, this, &AZPlayerCharacter::RotateCamera);
-		Input->BindAction(IA_RotateCamera, ETriggerEvent::Completed, this, &AZPlayerCharacter::RotateCamera);
+		Input->BindAction(IA_Move, ETriggerEvent::Triggered, this, &ABPlayerCharacter::Move);
+		Input->BindAction(IA_Look, ETriggerEvent::Triggered, this, &ABPlayerCharacter::Look);
+		Input->BindAction(IA_SwitchCamera, ETriggerEvent::Triggered, this, &ABPlayerCharacter::SwitchCamera);
+		Input->BindAction(IA_RotateCamera, ETriggerEvent::Triggered, this, &ABPlayerCharacter::RotateCamera);
+		Input->BindAction(IA_RotateCamera, ETriggerEvent::Completed, this, &ABPlayerCharacter::RotateCamera);
 	}
 
 }
 
 
-void AZPlayerCharacter::AddMappingContext(TSoftObjectPtr<UInputMappingContext> Context, int32 Priority)
+void ABPlayerCharacter::AddMappingContext(TSoftObjectPtr<UInputMappingContext> Context, int32 Priority)
 {
 	if (Context.IsNull()) return;
 
@@ -78,7 +78,7 @@ void AZPlayerCharacter::AddMappingContext(TSoftObjectPtr<UInputMappingContext> C
 }
 
 
-void AZPlayerCharacter::RemoveMappingContext(TSoftObjectPtr<UInputMappingContext> Context)
+void ABPlayerCharacter::RemoveMappingContext(TSoftObjectPtr<UInputMappingContext> Context)
 {
 	if (Context.IsNull()) return;
 
@@ -92,7 +92,7 @@ void AZPlayerCharacter::RemoveMappingContext(TSoftObjectPtr<UInputMappingContext
 }
 
 
-void AZPlayerCharacter::Move(const FInputActionValue& Value)
+void ABPlayerCharacter::Move(const FInputActionValue& Value)
 {
 	const FVector2D CurrentValue = Value.Get<FVector2D>();
 	if (!CurrentValue.IsNearlyZero())
@@ -108,7 +108,7 @@ void AZPlayerCharacter::Move(const FInputActionValue& Value)
 }
 
 
-void AZPlayerCharacter::Look(const FInputActionValue& Value)
+void ABPlayerCharacter::Look(const FInputActionValue& Value)
 {
 	const FVector2D CurrentValue = Value.Get<FVector2D>();
 	if (CurrentValue.X != 0)
@@ -123,7 +123,7 @@ void AZPlayerCharacter::Look(const FInputActionValue& Value)
 }
 
 
-void AZPlayerCharacter::SwitchCamera(const FInputActionValue& Value)
+void ABPlayerCharacter::SwitchCamera(const FInputActionValue& Value)
 {
 	if (SecurityCameraController)
 	{
@@ -141,7 +141,7 @@ void AZPlayerCharacter::SwitchCamera(const FInputActionValue& Value)
 }
 
 
-void AZPlayerCharacter::RotateCamera(const FInputActionValue& Value)
+void ABPlayerCharacter::RotateCamera(const FInputActionValue& Value)
 {
 	if (SecurityCameraController)
 	{
@@ -152,19 +152,19 @@ void AZPlayerCharacter::RotateCamera(const FInputActionValue& Value)
 }
 
 
-void AZPlayerCharacter::AddSecurityCameraControlMappingInput()
+void ABPlayerCharacter::AddSecurityCameraControlMappingInput()
 {
 	AddMappingContext(SecurityCameraControlMapping, 0);
 }
 
 
-void AZPlayerCharacter::RemoveSecurityCameraControlMappingInput()
+void ABPlayerCharacter::RemoveSecurityCameraControlMappingInput()
 {
 	RemoveMappingContext(SecurityCameraControlMapping);
 }
 
 
-void AZPlayerCharacter::SetSecurityCameraController(AZSecurityCameraController* Value)
+void ABPlayerCharacter::SetSecurityCameraController(AZSecurityCameraController* Value)
 {
 	if (Value)
 	{

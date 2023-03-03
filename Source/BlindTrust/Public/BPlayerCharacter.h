@@ -5,16 +5,16 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
-#include "ZPlayerCharacter.generated.h"
+#include "BPlayerCharacter.generated.h"
 
 UCLASS()
-class BLINDTRUST_API AZPlayerCharacter : public ACharacter
+class BLINDTRUST_API ABPlayerCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
-	AZPlayerCharacter();
+	ABPlayerCharacter();
 
 protected:
 	// Called when the game starts or when spawned
