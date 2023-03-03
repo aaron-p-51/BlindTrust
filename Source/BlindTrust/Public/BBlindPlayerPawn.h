@@ -6,16 +6,16 @@
 #include "GameFramework/Character.h"
 #include "ZombieChaseTypes.h"
 #include "InputActionValue.h"
-#include "ZBlindPlayerPawn.generated.h"
+#include "BBlindPlayerPawn.generated.h"
 
 UCLASS()
-class BLINDTRUST_API AZBlindPlayerPawn : public ACharacter
+class BLINDTRUST_API ABBlindPlayerPawn : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
-	AZBlindPlayerPawn();
+	ABBlindPlayerPawn();
 
 protected:
 	// Called when the game starts or when spawned

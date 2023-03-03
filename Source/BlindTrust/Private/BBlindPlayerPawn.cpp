@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ZBlindPlayerPawn.h"
+#include "BBlindPlayerPawn.h"
 
 // Engine Includes
 #include "Camera/CameraComponent.h"
@@ -19,7 +19,7 @@
 
 
 // Sets default values
-AZBlindPlayerPawn::AZBlindPlayerPawn()
+ABBlindPlayerPawn::ABBlindPlayerPawn()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -32,7 +32,7 @@ AZBlindPlayerPawn::AZBlindPlayerPawn()
 }
 
 // Called when the game starts or when spawned
-void AZBlindPlayerPawn::BeginPlay()
+void ABBlindPlayerPawn::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -50,7 +50,7 @@ void AZBlindPlayerPawn::BeginPlay()
 }
 
 // Called every frame
-void AZBlindPlayerPawn::Tick(float DeltaTime)
+void ABBlindPlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
@@ -87,19 +87,19 @@ void AZBlindPlayerPawn::Tick(float DeltaTime)
 
 
 // Called to bind functionality to input
-void AZBlindPlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ABBlindPlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	if (UEnhancedInputComponent* Input = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		Input->BindAction(IA_MoveAction, ETriggerEvent::Triggered, this, &AZBlindPlayerPawn::Move);
+		Input->BindAction(IA_MoveAction, ETriggerEvent::Triggered, this, &ABBlindPlayerPawn::Move);
 	}
 
 }
 
 
-void AZBlindPlayerPawn::MoveForward(float Value)
+void ABBlindPlayerPawn::MoveForward(float Value)
 {
 	if (Value != 0.f)
 	{
@@ -111,7 +111,7 @@ void AZBlindPlayerPawn::MoveForward(float Value)
 }
 
 
-void AZBlindPlayerPawn::MoveRight(float Value)
+void ABBlindPlayerPawn::MoveRight(float Value)
 {
 	if (Value != 0.f)
 	{
@@ -123,7 +123,7 @@ void AZBlindPlayerPawn::MoveRight(float Value)
 }
 
 
-void AZBlindPlayerPawn::Move(const FInputActionValue& Value)
+void ABBlindPlayerPawn::Move(const FInputActionValue& Value)
 {
 	const bool CurrentValue = Value.Get<bool>();
 	if (CurrentValue)
@@ -132,7 +132,7 @@ void AZBlindPlayerPawn::Move(const FInputActionValue& Value)
 	}
 }
 
-float AZBlindPlayerPawn::CalculateSpeed() const
+float ABBlindPlayerPawn::CalculateSpeed() const
 {
 	FVector Velocity = GetVelocity();
 	Velocity.Z = 0.f;
@@ -141,7 +141,7 @@ float AZBlindPlayerPawn::CalculateSpeed() const
 }
 
 
-void AZBlindPlayerPawn::TurnInPlace(float DeltaTime)
+void ABBlindPlayerPawn::TurnInPlace(float DeltaTime)
 {
 	if (AimOffset_Yaw > 40.f)
 	{
