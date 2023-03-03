@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ZGameMode.h"
+#include "BGameMode.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerStart.h"
@@ -11,7 +11,7 @@
 const FName BLIND_PLAYER_START = FName("BlindPlayerStart");
 const FName GUIDE_PLAYER_START = FName("GuidePlayerStart");
 
-void AZGameMode::BeginPlay()
+void ABGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -33,7 +33,7 @@ void AZGameMode::BeginPlay()
 
 }
 
-void AZGameMode::PostLogin(APlayerController* NewPlayer)
+void ABGameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
 
@@ -53,7 +53,7 @@ void AZGameMode::PostLogin(APlayerController* NewPlayer)
 }
 
 
-APlayerStart* AZGameMode::GetPlayerStartForPlayerType(EPlayerType PlayerType)
+APlayerStart* ABGameMode::GetPlayerStartForPlayerType(EPlayerType PlayerType)
 {
 	FName PlayerStartTag;
 
