@@ -3,7 +3,7 @@
 
 #include "ZLobbyGameMode.h"
 #include "GameFramework/PlayerState.h"
-#include "ZGameInstance.h"
+#include "BGameInstance.h"
 
 void AZLobbyGameMode::GetPlayerIds()
 {
@@ -37,9 +37,9 @@ void AZLobbyGameMode::SetHostPlayerType(int32 HostPlayerId, EPlayerType HostPlay
 		}
 	}
 	
-	if (UZGameInstance* ZGameInstance = Cast<UZGameInstance>(GetGameInstance()))
+	if (UBGameInstance* GameInstance = Cast<UBGameInstance>(GetGameInstance()))
 	{
-		ZGameInstance->SetPlayerType(HostPlayerId, HostPlayerType);
-		ZGameInstance->SetPlayerType(ClientPlayerId, ClientPlayerType);
+		GameInstance->SetPlayerType(HostPlayerId, HostPlayerType);
+		GameInstance->SetPlayerType(ClientPlayerId, ClientPlayerType);
 	}
 }

@@ -5,13 +5,13 @@
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include "ZombieChaseTypes.h"
-#include "ZGameInstance.generated.h"
+#include "BGameInstance.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class BLINDTRUST_API UZGameInstance : public UGameInstance
+class BLINDTRUST_API UBGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 

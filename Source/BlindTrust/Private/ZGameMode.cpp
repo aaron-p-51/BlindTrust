@@ -6,7 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerStart.h"
 #include "GameFramework/PlayerState.h"
-#include "ZGameInstance.h"
+#include "BGameInstance.h"
 
 const FName BLIND_PLAYER_START = FName("BlindPlayerStart");
 const FName GUIDE_PLAYER_START = FName("GuidePlayerStart");
@@ -40,9 +40,9 @@ void AZGameMode::PostLogin(APlayerController* NewPlayer)
 	APlayerState* PlayerState = NewPlayer->GetPlayerState<APlayerState>();
 	if (PlayerState)
 	{
-		if (UZGameInstance* ZGameInstance = Cast<UZGameInstance>(GetGameInstance()))
+		if (UBGameInstance* BGameInstance = Cast<UBGameInstance>(GetGameInstance()))
 		{
-			EPlayerType PlayerType = ZGameInstance->GetPlayerType(PlayerState->PlayerId);
+			EPlayerType PlayerType = BGameInstance->GetPlayerType(PlayerState->PlayerId);
 			APlayerStart* PlayerStart = GetPlayerStartForPlayerType(PlayerType);
 			if (PlayerStart)
 			{
