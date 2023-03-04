@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ZSecurityCameraController.h"
+#include "BSecurityCameraController.h"
 
 #include "Components/StaticMeshComponent.h"
 #include "Components/SceneCaptureComponent2D.h"
@@ -14,7 +14,7 @@
 const FName SHOW_STATIC_PARAM = FName("ShowStatic");
 
 // Sets default values
-AZSecurityCameraController::AZSecurityCameraController()
+ABSecurityCameraController::ABSecurityCameraController()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -30,7 +30,7 @@ AZSecurityCameraController::AZSecurityCameraController()
 
 
 // Called when the game starts or when spawned
-void AZSecurityCameraController::BeginPlay()
+void ABSecurityCameraController::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -38,14 +38,14 @@ void AZSecurityCameraController::BeginPlay()
 
 	if (InteractionVolume)
 	{
-		InteractionVolume->OnComponentBeginOverlap.AddDynamic(this, &AZSecurityCameraController::OnInteractionVolumeBeginOverlap);
-		InteractionVolume->OnComponentEndOverlap.AddDynamic(this, &AZSecurityCameraController::OnInteractionVolumeEndOverlap);
+		InteractionVolume->OnComponentBeginOverlap.AddDynamic(this, &ABSecurityCameraController::OnInteractionVolumeBeginOverlap);
+		InteractionVolume->OnComponentEndOverlap.AddDynamic(this, &ABSecurityCameraController::OnInteractionVolumeEndOverlap);
 	}
 }
 
 
 // Called every frame
-void AZSecurityCameraController::Tick(float DeltaTime)
+void ABSecurityCameraController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
@@ -56,7 +56,7 @@ void AZSecurityCameraController::Tick(float DeltaTime)
 }
 
 
-void AZSecurityCameraController::SetInitialCamera()
+void ABSecurityCameraController::SetInitialCamera()
 {
 	if (SecurityCameras.Num() > 0 && Camera)
 	{
@@ -66,7 +66,7 @@ void AZSecurityCameraController::SetInitialCamera()
 }
 
 
-void AZSecurityCameraController::MoveCameraToCurrentSecurityCamera()
+void ABSecurityCameraController::MoveCameraToCurrentSecurityCamera()
 {
 	FVector CameraLocation;
 	FRotator CameraRotation;
@@ -77,7 +77,7 @@ void AZSecurityCameraController::MoveCameraToCurrentSecurityCamera()
 }
 
 
-void AZSecurityCameraController::ShowStaticMonitorScreen(bool Value)
+void ABSecurityCameraController::ShowStaticMonitorScreen(bool Value)
 {
 	if (MonitorScreenDynInstance)
 	{
@@ -87,7 +87,7 @@ void AZSecurityCameraController::ShowStaticMonitorScreen(bool Value)
 }
 
 
-void AZSecurityCameraController::SwitchCameraDelayComplete()
+void ABSecurityCameraController::SwitchCameraDelayComplete()
 {
 	MoveCameraToCurrentSecurityCamera();
 	ShowStaticMonitorScreen(false);
@@ -95,7 +95,7 @@ void AZSecurityCameraController::SwitchCameraDelayComplete()
 }
 
 
-void AZSecurityCameraController::OnInteractionVolumeBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ABSecurityCameraController::OnInteractionVolumeBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (ABPlayerCharacter* PlayerCharacter = Cast<ABPlayerCharacter>(OtherActor))
 	{
@@ -104,7 +104,7 @@ void AZSecurityCameraController::OnInteractionVolumeBeginOverlap(UPrimitiveCompo
 }
 
 
-void AZSecurityCameraController::OnInteractionVolumeEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+void ABSecurityCameraController::OnInteractionVolumeEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	if (ABPlayerCharacter* PlayerCharacter = Cast<ABPlayerCharacter>(OtherActor))
 	{
@@ -118,7 +118,7 @@ void AZSecurityCameraController::OnInteractionVolumeEndOverlap(UPrimitiveCompone
 // Input
 //
 ////////////////////////////////////////////////////
-void AZSecurityCameraController::SwitchNextCamera()
+void ABSecurityCameraController::SwitchNextCamera()
 {
 	if (!bIsSwitchingCameras && SecurityCameras.Num() > 1)
 	{
@@ -132,7 +132,7 @@ void AZSecurityCameraController::SwitchNextCamera()
 		if (CameraSwitchDelay > 0.f)
 		{
 			ShowStaticMonitorScreen(true);
-			GetWorld()->GetTimerManager().SetTimer(TimerHandle_SwitchCameraDelay, this, &AZSecurityCameraController::SwitchCameraDelayComplete, CameraSwitchDelay, false);
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle_SwitchCameraDelay, this, &ABSecurityCameraController::SwitchCameraDelayComplete, CameraSwitchDelay, false);
 		}
 		else
 		{
@@ -142,7 +142,7 @@ void AZSecurityCameraController::SwitchNextCamera()
 }
 
 
-void AZSecurityCameraController::SwitchPreviousCamera()
+void ABSecurityCameraController::SwitchPreviousCamera()
 {
 	if (!bIsSwitchingCameras && SecurityCameras.Num() > 1)
 	{
@@ -156,7 +156,7 @@ void AZSecurityCameraController::SwitchPreviousCamera()
 		if (CameraSwitchDelay > 0.f)
 		{
 			ShowStaticMonitorScreen(true);
-			GetWorld()->GetTimerManager().SetTimer(TimerHandle_SwitchCameraDelay, this, &AZSecurityCameraController::SwitchCameraDelayComplete, CameraSwitchDelay, false);
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle_SwitchCameraDelay, this, &ABSecurityCameraController::SwitchCameraDelayComplete, CameraSwitchDelay, false);
 		}
 		else
 		{
@@ -166,7 +166,7 @@ void AZSecurityCameraController::SwitchPreviousCamera()
 }
 
 
-void AZSecurityCameraController::AddCurrentCameraPitch(float Value)
+void ABSecurityCameraController::AddCurrentCameraPitch(float Value)
 {
 	if (!bIsSwitchingCameras && CurrentSecurityCamera)
 	{
@@ -175,7 +175,7 @@ void AZSecurityCameraController::AddCurrentCameraPitch(float Value)
 }
 
 
-void AZSecurityCameraController::AddCurrentCameraYaw(float Value)
+void ABSecurityCameraController::AddCurrentCameraYaw(float Value)
 {
 	if (!bIsSwitchingCameras && CurrentSecurityCamera)
 	{

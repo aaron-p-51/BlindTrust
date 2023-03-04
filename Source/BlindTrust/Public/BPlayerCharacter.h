@@ -50,7 +50,7 @@ protected:
 	void RotateCamera(const FInputActionValue& Value);
 
 	UPROPERTY(VisibleAnywhere)
-	class AZSecurityCameraController* SecurityCameraController;
+	class ABSecurityCameraController* SecurityCameraController;
 
 
 
@@ -64,7 +64,7 @@ public:
 	void AddSecurityCameraControlMappingInput();
 	void RemoveSecurityCameraControlMappingInput();
 
-	void SetSecurityCameraController(AZSecurityCameraController* Value);
+	void SetSecurityCameraController(ABSecurityCameraController* Value);
 
 private:
 

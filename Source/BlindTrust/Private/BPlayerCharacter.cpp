@@ -7,7 +7,7 @@
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
 
-#include "ZSecurityCameraController.h"
+#include "BSecurityCameraController.h"
 
 // Sets default values
 ABPlayerCharacter::ABPlayerCharacter()
@@ -164,7 +164,7 @@ void ABPlayerCharacter::RemoveSecurityCameraControlMappingInput()
 }
 
 
-void ABPlayerCharacter::SetSecurityCameraController(AZSecurityCameraController* Value)
+void ABPlayerCharacter::SetSecurityCameraController(ABSecurityCameraController* Value)
 {
 	if (Value)
 	{
