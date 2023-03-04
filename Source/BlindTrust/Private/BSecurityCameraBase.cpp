@@ -1,13 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ZSecurityCameraBase.h"
+#include "BSecurityCameraBase.h"
 
 #include "Components/SceneCaptureComponent2D.h"
 #include "Materials/MaterialInstanceDynamic.h"
 
 // Sets default values
-AZSecurityCameraBase::AZSecurityCameraBase()
+ABSecurityCameraBase::ABSecurityCameraBase()
 {
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	SetRootComponent(Root);
@@ -23,7 +23,7 @@ AZSecurityCameraBase::AZSecurityCameraBase()
 }
 
 // Called when the game starts or when spawned
-void AZSecurityCameraBase::BeginPlay()
+void ABSecurityCameraBase::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -31,7 +31,7 @@ void AZSecurityCameraBase::BeginPlay()
 }
 
 
-void AZSecurityCameraBase::SetupDynamicMonitorMaterial()
+void ABSecurityCameraBase::SetupDynamicMonitorMaterial()
 {
 	if (MonitorScreen)
 	{
@@ -42,7 +42,7 @@ void AZSecurityCameraBase::SetupDynamicMonitorMaterial()
 }
 
 
-bool AZSecurityCameraBase::GetCameraLocationAndRotation(FVector& Location, FRotator& Rotation) const
+bool ABSecurityCameraBase::GetCameraLocationAndRotation(FVector& Location, FRotator& Rotation) const
 {
 	if (Camera)
 	{
@@ -55,7 +55,7 @@ bool AZSecurityCameraBase::GetCameraLocationAndRotation(FVector& Location, FRota
 }
 
 
-FRotator AZSecurityCameraBase::GetCameraRotation() const
+FRotator ABSecurityCameraBase::GetCameraRotation() const
 {
 	if (Camera)
 	{

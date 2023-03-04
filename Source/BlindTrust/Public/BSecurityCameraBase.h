@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "ZSecurityCameraBase.generated.h"
+#include "BSecurityCameraBase.generated.h"
 
 UCLASS()
-class BLINDTRUST_API AZSecurityCameraBase : public AActor
+class BLINDTRUST_API ABSecurityCameraBase : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AZSecurityCameraBase();
+	ABSecurityCameraBase();
 
 protected:
 	// Called when the game starts or when spawned

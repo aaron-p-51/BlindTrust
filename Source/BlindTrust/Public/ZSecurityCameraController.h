@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "ZSecurityCameraBase.h"
+#include "BSecurityCameraBase.h"
 #include "ZSecurityCameraController.generated.h"
 
 UCLASS()
-class BLINDTRUST_API AZSecurityCameraController : public AZSecurityCameraBase
+class BLINDTRUST_API AZSecurityCameraController : public ABSecurityCameraBase
 {
 	GENERATED_BODY()
 	
