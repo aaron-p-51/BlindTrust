@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ZSecurityCamera.h"
+#include "BSecurityCamera.h"
 
 #include "Components/StaticMeshComponent.h"
 #include "Components/SceneCaptureComponent2D.h"
@@ -10,7 +10,7 @@
 const FName VFX_LINE_SPEED_PARAM = FName("VFXLineSpeed");
 
 // Sets default values
-AZSecurityCamera::AZSecurityCamera()
+ABSecurityCamera::ABSecurityCamera()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -28,7 +28,7 @@ AZSecurityCamera::AZSecurityCamera()
 
 
 // Called when the game starts or when spawned
-void AZSecurityCamera::BeginPlay()
+void ABSecurityCamera::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -36,7 +36,7 @@ void AZSecurityCamera::BeginPlay()
 }
 
 
-void AZSecurityCamera::ValidateInstanceValues()
+void ABSecurityCamera::ValidateInstanceValues()
 {
 	// Validate Pitch values set for instances of this class
 	if (MinCameraPitch < -89.f || MinCameraPitch > 89.f)
@@ -83,7 +83,7 @@ void AZSecurityCamera::ValidateInstanceValues()
 
 
 // Called every frame
-void AZSecurityCamera::Tick(float DeltaTime)
+void ABSecurityCamera::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
@@ -92,7 +92,7 @@ void AZSecurityCamera::Tick(float DeltaTime)
 }
 
 
-void AZSecurityCamera::AddPitchInput(float DeltaTime)
+void ABSecurityCamera::AddPitchInput(float DeltaTime)
 {
 	if (Camera && FMath::Abs(PitchInput) > 0.f)
 	{
@@ -112,7 +112,7 @@ void AZSecurityCamera::AddPitchInput(float DeltaTime)
 }
 
 
-void AZSecurityCamera::AddYawInput(float DeltaTime)
+void ABSecurityCamera::AddYawInput(float DeltaTime)
 {
 	if (Camera && FMath::Abs(YawInput) > 0.f)
 	{

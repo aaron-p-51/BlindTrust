@@ -33,7 +33,7 @@ protected:
 	 */
 	/** Instance set of all AZSecurityCamera's for this ZSecurityCameraController will control */
 	UPROPERTY(EditInstanceOnly)
-	TArray<class AZSecurityCamera*> SecurityCameras;
+	TArray<class ABSecurityCamera*> SecurityCameras;
 
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float CameraSwitchDelay;
@@ -44,7 +44,7 @@ protected:
 	 */
 	/** Current AZSecurityCamera in SecurityCameras under control */
 	UPROPERTY()
-	AZSecurityCamera* CurrentSecurityCamera;
+	ABSecurityCamera* CurrentSecurityCamera;
 
 
 public:	

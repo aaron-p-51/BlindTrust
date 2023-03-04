@@ -8,7 +8,7 @@
 #include "Components/BoxComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
 
-#include "ZSecurityCamera.h"
+#include "BSecurityCamera.h"
 #include "BPlayerCharacter.h"
 
 const FName SHOW_STATIC_PARAM = FName("ShowStatic");
