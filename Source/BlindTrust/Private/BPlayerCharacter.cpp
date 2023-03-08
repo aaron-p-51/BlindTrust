@@ -7,7 +7,7 @@
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
 
-#include "BSecurityCameraController.h"
+
 
 // Sets default values
 ABPlayerCharacter::ABPlayerCharacter()
@@ -56,9 +56,9 @@ void ABPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	{
 		Input->BindAction(IA_Move, ETriggerEvent::Triggered, this, &ABPlayerCharacter::Move);
 		Input->BindAction(IA_Look, ETriggerEvent::Triggered, this, &ABPlayerCharacter::Look);
-		Input->BindAction(IA_SwitchCamera, ETriggerEvent::Triggered, this, &ABPlayerCharacter::SwitchCamera);
-		Input->BindAction(IA_RotateCamera, ETriggerEvent::Triggered, this, &ABPlayerCharacter::RotateCamera);
-		Input->BindAction(IA_RotateCamera, ETriggerEvent::Completed, this, &ABPlayerCharacter::RotateCamera);
+		//Input->BindAction(IA_SwitchCamera, ETriggerEvent::Triggered, this, &ABPlayerCharacter::SwitchCamera);
+		//Input->BindAction(IA_RotateCamera, ETriggerEvent::Triggered, this, &ABPlayerCharacter::RotateCamera);
+		//Input->BindAction(IA_RotateCamera, ETriggerEvent::Completed, this, &ABPlayerCharacter::RotateCamera);
 	}
 
 }
@@ -123,62 +123,16 @@ void ABPlayerCharacter::Look(const FInputActionValue& Value)
 }
 
 
-void ABPlayerCharacter::SwitchCamera(const FInputActionValue& Value)
-{
-	if (SecurityCameraController)
-	{
-		const float CurrentValue = Value.Get<float>();
-		UE_LOG(LogTemp, Warning, TEXT("SwitchCamera: %f"), CurrentValue);
-		if (CurrentValue > 0.f)
-		{
-			SecurityCameraController->SwitchNextCamera();
-		}
-		else if (CurrentValue < 0.f)
-		{
-			SecurityCameraController->SwitchPreviousCamera();
-		}
-	}
-}
 
 
-void ABPlayerCharacter::RotateCamera(const FInputActionValue& Value)
-{
-	if (SecurityCameraController)
-	{
-		const FVector2D CurrentValue = Value.Get<FVector2D>();
-		SecurityCameraController->AddCurrentCameraPitch(CurrentValue.Y);
-		SecurityCameraController->AddCurrentCameraYaw(CurrentValue.X);
-	}
-}
 
 
-void ABPlayerCharacter::AddSecurityCameraControlMappingInput()
-{
-	AddMappingContext(SecurityCameraControlMapping, 0);
-}
 
 
-void ABPlayerCharacter::RemoveSecurityCameraControlMappingInput()
-{
-	RemoveMappingContext(SecurityCameraControlMapping);
-}
 
 
-void ABPlayerCharacter::SetSecurityCameraController(ABSecurityCameraController* Value)
-{
-	if (Value)
-	{
-		SecurityCameraController = Value;
-		AddMappingContext(SecurityCameraControlMapping, 0);
-		UE_LOG(LogTemp, Warning, TEXT("SetSecurityCameraController"));
-	}
-	else
-	{
-		SecurityCameraController = nullptr;
-		RemoveMappingContext(SecurityCameraControlMapping);
-		UE_LOG(LogTemp, Warning, TEXT("RemoveSecurityCameraController"));
-	}
-}
+
+
 
 
 

@@ -20,7 +20,33 @@ protected:
 	 * Security camera control input
 	 */
 
+	 UPROPERTY(EditAnywhere, Category = "Input")
+	TSoftObjectPtr<class UInputMappingContext> SecurityCameraControlMapping;
 
-	
+	UPROPERTY(EditAnywhere, Category = "Input")
+	class UInputAction* IA_SwitchCamera;
+
+	void SwitchCamera(const FInputActionValue& Value);
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	class UInputAction* IA_RotateCamera;
+
+	void RotateCamera(const FInputActionValue& Value);
+
+
+	UPROPERTY(VisibleAnywhere)
+	class ABSecurityCameraController* SecurityCameraController;
+
+public:
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	void AddSecurityCameraControlMappingInput();
+	void RemoveSecurityCameraControlMappingInput();
+
+	void SetSecurityCameraController(ABSecurityCameraController* Value);
+
+
 	
 };

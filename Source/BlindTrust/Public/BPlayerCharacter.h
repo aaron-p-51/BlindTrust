@@ -36,25 +36,10 @@ protected:
 
 	void Look(const FInputActionValue& Value);
 
-	UPROPERTY(EditAnywhere, Category = "Input")
-	TSoftObjectPtr<class UInputMappingContext> SecurityCameraControlMapping;
+	void AddMappingContext(TSoftObjectPtr<UInputMappingContext> Context, int32 Priority = 0);
+	void RemoveMappingContext(TSoftObjectPtr<UInputMappingContext> Context);
 
-	UPROPERTY(EditAnywhere, Category = "Input")
-	class UInputAction* IA_SwitchCamera;
-
-	void SwitchCamera(const FInputActionValue& Value);
-
-	UPROPERTY(EditAnywhere, Category = "Input")
-	class UInputAction* IA_RotateCamera;
-
-	void RotateCamera(const FInputActionValue& Value);
-
-
-	UPROPERTY(VisibleAnywhere)
-	class ABSecurityCameraController* SecurityCameraController;
-
-
-
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -62,15 +47,11 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	void AddSecurityCameraControlMappingInput();
-	void RemoveSecurityCameraControlMappingInput();
-
-	void SetSecurityCameraController(ABSecurityCameraController* Value);
+	
 
 private:
 
-	void AddMappingContext(TSoftObjectPtr<UInputMappingContext> Context, int32 Priority = 0);
-	void RemoveMappingContext(TSoftObjectPtr<UInputMappingContext> Context);
+	
 
 
 };

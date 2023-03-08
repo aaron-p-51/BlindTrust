@@ -9,7 +9,7 @@
 #include "Materials/MaterialInstanceDynamic.h"
 
 #include "BSecurityCamera.h"
-#include "BPlayerCharacter.h"
+#include "BGuidePlayerCharacter.h"
 
 const FName SHOW_STATIC_PARAM = FName("ShowStatic");
 
@@ -104,18 +104,18 @@ void ABSecurityCameraController::SwitchCameraDelayComplete()
 
 void ABSecurityCameraController::OnInteractionVolumeBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (ABPlayerCharacter* PlayerCharacter = Cast<ABPlayerCharacter>(OtherActor))
+	if (auto GuidePlayerCharacter = Cast<ABGuidePlayerCharacter>(OtherActor))
 	{
-		PlayerCharacter->SetSecurityCameraController(this);
+		GuidePlayerCharacter->SetSecurityCameraController(this);
 	}
 }
 
 
 void ABSecurityCameraController::OnInteractionVolumeEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (ABPlayerCharacter* PlayerCharacter = Cast<ABPlayerCharacter>(OtherActor))
+	if (auto GuidePlayerCharacter = Cast<ABGuidePlayerCharacter>(OtherActor))
 	{
-		PlayerCharacter->SetSecurityCameraController(nullptr);
+		GuidePlayerCharacter->SetSecurityCameraController(nullptr);
 	}
 }
 
