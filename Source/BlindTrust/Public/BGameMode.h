@@ -22,6 +22,12 @@ protected:
 	UPROPERTY()
 	TArray<class APlayerStart*> PlayerStarts;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class ABBlindPlayerCharacter> BlindPlayerCharacterClass;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class ABGuidePlayerCharacter> GuidePlayerCharacterClass;
+
 protected:
 
 	APlayerStart* GetPlayerStartForPlayerType(EPlayerType PlayerType);
@@ -30,7 +36,11 @@ public:
 
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
+	void ReplacePawnForPlayer(APlayerController* PlayerController, EPlayerType PlayerType);
 
+private:
+
+	void GetAllPlayerStarts();
 	
 
 	

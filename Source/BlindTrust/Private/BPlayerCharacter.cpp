@@ -6,7 +6,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
-
+#include "Net/UnrealNetwork.h"
 
 
 // Sets default values
@@ -56,11 +56,25 @@ void ABPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	{
 		Input->BindAction(IA_Move, ETriggerEvent::Triggered, this, &ABPlayerCharacter::Move);
 		Input->BindAction(IA_Look, ETriggerEvent::Triggered, this, &ABPlayerCharacter::Look);
-		//Input->BindAction(IA_SwitchCamera, ETriggerEvent::Triggered, this, &ABPlayerCharacter::SwitchCamera);
-		//Input->BindAction(IA_RotateCamera, ETriggerEvent::Triggered, this, &ABPlayerCharacter::RotateCamera);
-		//Input->BindAction(IA_RotateCamera, ETriggerEvent::Completed, this, &ABPlayerCharacter::RotateCamera);
 	}
 
+}
+
+
+void ABPlayerCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	ClientPossessed();
+}
+
+
+void ABPlayerCharacter::ClientPossessed_Implementation()
+{
+	if (IsLocallyControlled())
+	{
+		AddMappingContext(DefaultInputMapping);
+	}
 }
 
 
