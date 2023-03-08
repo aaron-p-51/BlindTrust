@@ -20,6 +20,7 @@ ABSecurityCameraBase::ABSecurityCameraBase()
 
 	Camera = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("Camera"));
 	Camera->SetupAttachment(CameraMount);
+	Camera->bCaptureOnMovement = false;
 }
 
 // Called when the game starts or when spawned

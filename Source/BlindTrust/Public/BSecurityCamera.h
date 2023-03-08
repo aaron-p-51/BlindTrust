@@ -24,12 +24,16 @@ protected:
 	 * Configuration
 	 */
 	 /** Min Camera pitch in local space. To avoid gimble lock value will be locked to -70 <= x <= 70 if set outside these values */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Pitch", meta = (ClampMin = "-89.0", ClampMax = "89.0", UIMin = "-89.0", UIMax = "89.0"))
-	float MinCameraPitch;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Pitch", meta = (ClampMin = "-180.0", ClampMax = "180.0", UIMin = "-180.0", UIMax = "180.0"))
+	float MinCameraPitchOffset;
 
 	/** Max Camera pitch in local space. To avoid gimble lock value will be locked to -70 <= x <= 70 if set outside these values */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Pitch", meta = (ClampMin = "-89.0", ClampMax = "89.0", UIMin = "-89.0", UIMax = "89.0"))
-	float MaxCameraPitch;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Pitch", meta = (ClampMin = "-180.0", ClampMax = "180.0", UIMin = "-180.0", UIMax = "180.0"))
+	float MaxCameraPitchOffset;
+
+	/** Starting Pitch offset for camera. Will only be applied if set between Min and Max Camera Pitch Offset */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Pitch")
+	float StartingPitchOffset;
 
 	/** Speed at which camera pitch will change after full input is applied. Higher values will change pitch faster. Default is 1 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Pitch", meta = (ClampMin = "0.0", UIMin = "0.0"))
@@ -40,12 +44,16 @@ protected:
 	float PitchInterpSpeed;
 
 	/** Min Camera Yaw in local space. To avoid gimble lock value will be locked to -70 <= x <= 70 if set outside these values */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Yaw", meta = (ClampMin = "-89.0", ClampMax = "89.0", UIMin = "-89.0", UIMax = "89.0"))
-	float MinCameraYaw;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Yaw", meta = (ClampMin = "-180.0", ClampMax = "180.0", UIMin = "-180.0", UIMax = "180.0"))
+	float MinCameraYawOffset;
 
 	/** Max Camera Yaw in local space. To avoid gimble lock value will be locked to -70 <= x <= 70 if set outside these values */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Yaw", meta = (ClampMin = "-89.0", ClampMax = "89.0", UIMin = "-89.0", UIMax = "89.0"))
-	float MaxCameraYaw;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Yaw", meta = (ClampMin = "-180.0", ClampMax = "180.0", UIMin = "-180.0", UIMax = "180.0"))
+	float MaxCameraYawOffset;
+
+	/** Starting Yaw offset for camera. Will only be applied if set between Min and Max Camera Yaw Offset */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Yaw")
+	float StartingYawOffset;
 
 	/** Speed at which camera yaw will change after full input is applied. Higher values will change pitch faster. Default is 1 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Yaw", meta = (ClampMin = "0.0", UIMin = "0.0"))
@@ -55,6 +63,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Yaw", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float YawInterpSpeed;
 
+	/** Capture scene at a fixed rate. If false scene will be captured every frame */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Scene Capture")
+	bool bUseFixedCaptureRate;
+
+	/** Scene capture rate */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Scene Capture", meta = (EditCondition = "bUseFixedCaptureRate"))
+	float SceneCaptureUpdateInterval;
+
 
 private:
 
@@ -62,33 +78,40 @@ private:
 	float PitchInput;
 	float CurrentInterpPitchInput;
 
-	/** Calculated values of valid pitch and yaw. Will set desired min and max pitch and yaw applied to starting camera rotation */
-	float CalculatedMinPitch;
-	float CalculatedMaxPitch;
-	float CalculatedMinYaw;
-	float CalculatedMaxYaw;
-	
 	/** Yaw Input Members. Current Yaw input applied */
 	float YawInput;
 	float CurrentInterpYawInput;
 
+	/** Current offset for yaw and rotation from initial rotation. Used to keep rotation clamped between min and max values */
+	float CurrentYawOffset;
+	float CurrentPitchOffset;
+
 	/** Validate instance set members. Sets Calculated Pitch and Yaw member variables */
-	void ValidateInstanceValues();
+	void SetInitialValues();
 
 	/** Add Pitch and Yaw to camera component */
-	void AddPitchInput(float DeltaTime);
-	void AddYawInput(float DeltaTime);
+	void ApplyPitchInput(float DeltaTime);
+	void ApplyYawInput(float DeltaTime);
 
+	/**
+	 * Update Scene Caputre
+	 */
+
+	FTimerHandle TimerHandle_UpdateSceneCapture;
+
+	UFUNCTION()
+	void UpdateSceneCapture();
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	
 	/**
 	 * Input
 	 */
 	FORCEINLINE void AddPitch(float Value) { PitchInput = Value; }
 	FORCEINLINE void AddYaw(float Value) { YawInput = Value; }
+
+	void SetUpdateSceneCaptureAtFixedRate(bool Value);
 
 };

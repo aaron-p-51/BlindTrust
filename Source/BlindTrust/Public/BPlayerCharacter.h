@@ -21,7 +21,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	/**
-	 * Player Input
+	 * Default Player Input
 	 */
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TSoftObjectPtr<class UInputMappingContext> DefaultInputMapping;
@@ -48,6 +48,7 @@ protected:
 	class UInputAction* IA_RotateCamera;
 
 	void RotateCamera(const FInputActionValue& Value);
+
 
 	UPROPERTY(VisibleAnywhere)
 	class ABSecurityCameraController* SecurityCameraController;
