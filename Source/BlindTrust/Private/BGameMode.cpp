@@ -5,11 +5,12 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerStart.h"
-#include "GameFramework/PlayerState.h"
+
 #include "BGameInstance.h"
 
 #include "BBlindPlayerCharacter.h"
 #include "BGuidePlayerCharacter.h"
+#include "BBlindPlayerSpawnVolume.h"
 
 const FName BLIND_PLAYER_START = FName("BlindPlayerStart");
 const FName GUIDE_PLAYER_START = FName("GuidePlayerStart");
@@ -18,13 +19,19 @@ void ABGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UE_LOG(LogTemp, Warning, TEXT("Begin Play"));
+	UE_LOG(LogTemp, Warning, TEXT("Begin Play GameMode"));
 
-	
+	//GuidePlayerStart = GetGuidePlayerStart();
+	//GetAllBlindPlayerStarts();
 
-	UE_LOG(LogTemp, Warning, TEXT("Found %d player starts"), PlayerStarts.Num());
 
-	GetAllPlayerStarts();
+	//UE_LOG(LogTemp, Warning, TEXT("Found %d player starts"), PlayerStarts.Num());
+
+	//GuidePlayerStartTransform = GetGuidePlayerStart();
+
+	//GetAllPlayerStarts();
+
+	//GetAllBlindPlayerStarts();
 
 }
 
@@ -88,33 +95,95 @@ void ABGameMode::ReplacePawnForPlayer(APlayerController* PlayerController, EPlay
 		ControlledPawn->Destroy();
 	}
 
-	APlayerStart* NewPlayerStart = GetPlayerStartForPlayerType(PlayerType);
-	FTransform SpawnTransform = NewPlayerStart->GetTransform();
+	//APlayerStart* NewPlayerStart = GetPlayerStartForPlayerType(PlayerType);
+	//FTransform SpawnTransform = NewPlayerStart->GetTransform();
 
 	if (PlayerType == EPlayerType::EPT_BlindPlayer)
 	{
-		auto BlindCharacter = Cast<ABBlindPlayerCharacter>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, BlindPlayerCharacterClass, SpawnTransform, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn));
-		if (BlindCharacter)
+		GetAllBlindPlayerStarts();
+
+		FTransform BlindPlayerSpawnTransform;
+		if (GetBlindPlayerStart(BlindPlayerSpawnTransform))
 		{
-			UGameplayStatics::FinishSpawningActor(BlindCharacter, SpawnTransform);
+			
+			auto BlindCharacter = Cast<ABBlindPlayerCharacter>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, BlindPlayerCharacterClass, BlindPlayerSpawnTransform, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn));
+			if (BlindCharacter)
+			{
+				UGameplayStatics::FinishSpawningActor(BlindCharacter, BlindPlayerSpawnTransform);
+				PlayerController->Possess(Cast<APawn>(BlindCharacter));
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("No Blind Player Start"));
 		}
 
-		PlayerController->Possess(Cast<APawn>(BlindCharacter));
+
+		/*auto BlindCharacter = Cast<ABBlindPlayerCharacter>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, BlindPlayerCharacterClass, SpawnTransform, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn));
+		if (BlindCharacter)
+		{
+
+			if (GetBlindPlayerStart(BlindPlayerSpawnTransform))
+			{
+				UGameplayStatics::FinishSpawningActor(BlindCharacter, BlindPlayerSpawnTransform);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("Unable to find spawn point for Blind Player"));
+			}
+		}*/
+
+		
 	}
 	else if (PlayerType == EPlayerType::EPT_GuidePlayer)
 	{
-		auto GuideCharacter = Cast<ABGuidePlayerCharacter>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, GuidePlayerCharacterClass, SpawnTransform,ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn));
-		if (GuideCharacter)
+		GuidePlayerStart = GuidePlayerStart == nullptr ? GetGuidePlayerStart() : GuidePlayerStart;
+		if (GuidePlayerStart == nullptr)
 		{
-			UGameplayStatics::FinishSpawningActor(GuideCharacter, SpawnTransform);
+			UE_LOG(LogTemp, Warning, TEXT("No Guide Player Start"));
+			return;
 		}
 
-		PlayerController->Possess(Cast<APawn>(GuideCharacter));
+		auto GuideCharacter = Cast<ABGuidePlayerCharacter>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, GuidePlayerCharacterClass, GuidePlayerStart->GetActorTransform(), ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn));
+		if (GuideCharacter)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Spawning Guide Player"));
+			UGameplayStatics::FinishSpawningActor(GuideCharacter, GuidePlayerStart->GetActorTransform());
+			PlayerController->Possess(Cast<APawn>(GuideCharacter));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("No Spawning Guide Player"));
+		}
 	}
 }
 
 
-void ABGameMode::GetAllPlayerStarts()
+void ABGameMode::GetAllBlindPlayerStarts()
+{
+	BlindPlayerStarts.Empty();
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(this, ABBlindPlayerSpawnVolume::StaticClass(), FoundActors);
+
+	if (FoundActors.Num() == 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No ABBlindPlayerSpawnVolume Actors"));
+	}
+
+	for (const auto& FoundActor : FoundActors)
+	{
+		if (auto BlindPlayerSpawnVolume = Cast<ABBlindPlayerSpawnVolume>(FoundActor))
+		{
+			BlindPlayerStarts.Add(BlindPlayerSpawnVolume);
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Found %d BlindPlayerSpawnVolumes"), BlindPlayerStarts.Num());
+
+}
+
+
+APlayerStart* ABGameMode::GetGuidePlayerStart() const
 {
 	TArray<AActor*> FoundActors;
 	UGameplayStatics::GetAllActorsOfClass(this, APlayerStart::StaticClass(), FoundActors);
@@ -122,35 +191,7 @@ void ABGameMode::GetAllPlayerStarts()
 	for (const auto& FoundActor : FoundActors)
 	{
 		APlayerStart* PlayerStart = Cast<APlayerStart>(FoundActor);
-		if (PlayerStart)
-		{
-			PlayerStarts.Add(PlayerStart);
-		}
-	}
-}
-
-
-APlayerStart* ABGameMode::GetPlayerStartForPlayerType(EPlayerType PlayerType)
-{
-	if (PlayerStarts.Num() == 0)
-	{
-		GetAllPlayerStarts();
-	}
-
-	FName PlayerStartTag;
-
-	if (PlayerType == EPlayerType::EPT_BlindPlayer)
-	{
-		PlayerStartTag = BLIND_PLAYER_START;
-	}
-	else if (PlayerType == EPlayerType::EPT_GuidePlayer)
-	{
-		PlayerStartTag = GUIDE_PLAYER_START;
-	}
-
-	for (const auto& PlayerStart : PlayerStarts)
-	{
-		if (PlayerStart->PlayerStartTag.IsEqual(PlayerStartTag))
+		if (PlayerStart && PlayerStart->ActorHasTag(GUIDE_PLAYER_START))
 		{
 			return PlayerStart;
 		}
@@ -158,3 +199,26 @@ APlayerStart* ABGameMode::GetPlayerStartForPlayerType(EPlayerType PlayerType)
 
 	return nullptr;
 }
+
+
+bool ABGameMode::GetBlindPlayerStart(FTransform& StartTransform) const
+{
+
+
+	int32 Attempts = 0;
+	while (Attempts < GetBlindPlayerStartAttempts)
+	{
+		if (ABBlindPlayerSpawnVolume* BlindPlayerSpawnVolume = BlindPlayerStarts[FMath::RandRange(0, BlindPlayerStarts.Num() - 1)])
+		{
+			if (BlindPlayerSpawnVolume->GetRandomSpawnPoint(StartTransform))
+			{
+				return true;
+			}
+		}
+
+		++Attempts;
+	}
+
+	return false;
+}
+

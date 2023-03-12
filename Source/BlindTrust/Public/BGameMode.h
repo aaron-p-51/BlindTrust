@@ -19,8 +19,12 @@ protected:
 
 	virtual void BeginPlay() override;
 
+
 	UPROPERTY()
-	TArray<class APlayerStart*> PlayerStarts;
+	TArray<class ABBlindPlayerSpawnVolume*> BlindPlayerStarts;
+
+	UPROPERTY(EditDefaultsOnly)
+	int32 GetBlindPlayerStartAttempts = 100;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class ABBlindPlayerCharacter> BlindPlayerCharacterClass;
@@ -28,9 +32,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class ABGuidePlayerCharacter> GuidePlayerCharacterClass;
 
+	UPROPERTY()
+	class APlayerStart* GuidePlayerStart;
+
 protected:
 
-	APlayerStart* GetPlayerStartForPlayerType(EPlayerType PlayerType);
 
 public:
 
@@ -40,7 +46,12 @@ public:
 
 private:
 
-	void GetAllPlayerStarts();
+
+	APlayerStart* GetGuidePlayerStart() const;
+	void GetAllBlindPlayerStarts();
+
+	bool GetBlindPlayerStart(FTransform& StartTransform) const;
+	
 	
 
 	

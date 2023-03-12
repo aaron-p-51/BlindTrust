@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "BlindTrustTypes.h"
 #include "BPlayerController.generated.h"
 
 /**
@@ -16,6 +17,12 @@ class BLINDTRUST_API ABPlayerController : public APlayerController
 
 protected:
 
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
 	virtual void OnPossess(APawn* InPawn) override;
+
+
+	EPlayerType GetPlayerTypeFromGameInstance() const;
 	
 };

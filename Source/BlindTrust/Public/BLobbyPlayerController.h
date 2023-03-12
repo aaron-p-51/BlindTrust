@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-
+#include "BlindTrustTypes.h"
 #include "BLobbyPlayerController.generated.h"
 
 /**
@@ -20,6 +20,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void TravelToGameMap();
 
+	UFUNCTION(BlueprintCallable)
+	void TravelToDevMap();
+
+	UFUNCTION(BlueprintCallable)
+	void SetPlayerType(EPlayerType PlayerType);
 
 	
 };
