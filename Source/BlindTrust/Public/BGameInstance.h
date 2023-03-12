@@ -15,10 +15,13 @@ class BLINDTRUST_API UBGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 
-public:
+
+protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EPlayerType HostPlayerType;
+	EPlayerType DefaultHostPlayerType = EPlayerType::EPT_GuidePlayer;
+
+public:
 
 	void SetHostPlayerType(EPlayerType PlayerType);
 
@@ -27,6 +30,13 @@ public:
 	void SetPlayerType(int32 PlayerId, EPlayerType PlayerType);
 	EPlayerType GetPlayerType(int32 PlayerId) const;
 
+	EPlayerType GetDefaultHostPlayerType() const { return DefaultHostPlayerType; }
+	EPlayerType GetDefaultClientPlayerType() const
+	{
+		if (DefaultHostPlayerType == EPlayerType::EPT_BlindPlayer) return EPlayerType::EPT_GuidePlayer;
+		else if (DefaultHostPlayerType == EPlayerType::EPT_GuidePlayer) return EPlayerType::EPT_BlindPlayer;
+		else return EPlayerType::EPT_MAX;
+	}
 
 private:
 

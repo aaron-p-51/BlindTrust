@@ -9,7 +9,7 @@
 #include "Materials/MaterialInstanceDynamic.h"
 
 #include "BSecurityCamera.h"
-#include "BPlayerCharacter.h"
+#include "BGuidePlayerCharacter.h"
 
 const FName SHOW_STATIC_PARAM = FName("ShowStatic");
 
@@ -26,6 +26,7 @@ ABSecurityCameraController::ABSecurityCameraController()
 	InteractionVolume->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 
 	bIsSwitchingCameras = false;
+
 }
 
 
@@ -40,6 +41,12 @@ void ABSecurityCameraController::BeginPlay()
 	{
 		InteractionVolume->OnComponentBeginOverlap.AddDynamic(this, &ABSecurityCameraController::OnInteractionVolumeBeginOverlap);
 		InteractionVolume->OnComponentEndOverlap.AddDynamic(this, &ABSecurityCameraController::OnInteractionVolumeEndOverlap);
+	}
+
+	if (Camera)
+	{
+		Camera->bCaptureEveryFrame = true;
+		Camera->bCaptureOnMovement = false;
 	}
 }
 
@@ -97,18 +104,18 @@ void ABSecurityCameraController::SwitchCameraDelayComplete()
 
 void ABSecurityCameraController::OnInteractionVolumeBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (ABPlayerCharacter* PlayerCharacter = Cast<ABPlayerCharacter>(OtherActor))
+	if (auto GuidePlayerCharacter = Cast<ABGuidePlayerCharacter>(OtherActor))
 	{
-		PlayerCharacter->SetSecurityCameraController(this);
+		GuidePlayerCharacter->SetSecurityCameraController(this);
 	}
 }
 
 
 void ABSecurityCameraController::OnInteractionVolumeEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (ABPlayerCharacter* PlayerCharacter = Cast<ABPlayerCharacter>(OtherActor))
+	if (auto GuidePlayerCharacter = Cast<ABGuidePlayerCharacter>(OtherActor))
 	{
-		PlayerCharacter->SetSecurityCameraController(nullptr);
+		GuidePlayerCharacter->SetSecurityCameraController(nullptr);
 	}
 }
 
@@ -127,7 +134,11 @@ void ABSecurityCameraController::SwitchNextCamera()
 		const int32 CurrentSecurityCameraIndex = SecurityCameras.IndexOfByKey(CurrentSecurityCamera);
 		const int32 NextSecurityCameraIndex = (CurrentSecurityCameraIndex + 1) % SecurityCameras.Num();
 
+		CurrentSecurityCamera->SetUpdateSceneCaptureAtFixedRate(true);
+
 		CurrentSecurityCamera = SecurityCameras[NextSecurityCameraIndex];
+
+		CurrentSecurityCamera->SetUpdateSceneCaptureAtFixedRate(false);
 
 		if (CameraSwitchDelay > 0.f)
 		{
@@ -151,7 +162,11 @@ void ABSecurityCameraController::SwitchPreviousCamera()
 		const int32 CurrentSecurityCameraIndex = SecurityCameras.IndexOfByKey(CurrentSecurityCamera);
 		const int32 NextSecurityCameraIndex = (CurrentSecurityCameraIndex - 1 + SecurityCameras.Num()) % SecurityCameras.Num();
 
+		CurrentSecurityCamera->SetUpdateSceneCaptureAtFixedRate(true);
+
 		CurrentSecurityCamera = SecurityCameras[NextSecurityCameraIndex];
+
+		CurrentSecurityCamera->SetUpdateSceneCaptureAtFixedRate(false);
 
 		if (CameraSwitchDelay > 0.f)
 		{
