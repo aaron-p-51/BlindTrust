@@ -5,10 +5,16 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerState.h"
+#include "Net/UnrealNetwork.h"
 
 #include "BPlayerCharacter.h"
 #include "BGameInstance.h"
 #include "BGameMode.h"
+
+
+#include "BBlindPlayerCharacter.h"
+#include "BGuidePlayerCharacter.h"
+
 
 void ABPlayerController::BeginPlay()
 {
@@ -27,41 +33,74 @@ void ABPlayerController::OnPossess(APawn* InPawn)
 		auto BasePlayerCharacter = Cast<ABPlayerCharacter>(InPawn);
 		if (!BasePlayerCharacter)
 		{
-			EPlayerType PlayerType = GetPlayerTypeFromGameInstance();
-			if (PlayerType != EPlayerType::EPT_MAX)
+			EPlayerType EPType = GetPlayerTypeFromGameInstance();
+			if (EPType != EPlayerType::EPT_MAX)
 			{
 				if (auto GameMode = Cast<ABGameMode>(UGameplayStatics::GetGameMode(this)))
 				{
-					GameMode->ReplacePawnForPlayer(this, PlayerType);
+					GameMode->ReplacePawnForPlayer(this, EPType);
+					return;
 				}
 			}
+		}
+
+		if (ABGuidePlayerCharacter* GuidePlayerCharacter = Cast<ABGuidePlayerCharacter>(InPawn))
+		{
+			PlayerType = EPlayerType::EPT_GuidePlayer;
+			OnRep_PlayerType();
+		}
+		else if (ABBlindPlayerCharacter* BlindPlayerCharacter = Cast<ABBlindPlayerCharacter>(InPawn))
+		{
+			PlayerType = EPlayerType::EPT_BlindPlayer;
+			OnRep_PlayerType();
 		}
 	}
 }
 
 EPlayerType ABPlayerController::GetPlayerTypeFromGameInstance() const
 {
-	EPlayerType PlayerType = EPlayerType::EPT_MAX;
+	EPlayerType EPType = EPlayerType::EPT_MAX;
 
 	if (auto GameInstance = Cast<UBGameInstance>(GetGameInstance()))
 	{
 		if (APlayerState* BPlayerState = GetPlayerState<APlayerState>())
 		{
-			PlayerType = GameInstance->GetPlayerType(BPlayerState->GetPlayerId());
+			EPType = GameInstance->GetPlayerType(BPlayerState->GetPlayerId());
 		}
-		if (PlayerType == EPlayerType::EPT_MAX)
+		if (EPType == EPlayerType::EPT_MAX)
 		{
 			// Is Server
 			if (GetRemoteRole() == ENetRole::ROLE_SimulatedProxy)
 			{
-				PlayerType = GameInstance->GetDefaultHostPlayerType();
+				EPType = GameInstance->GetDefaultHostPlayerType();
 			}
 			else if (GetRemoteRole() == ENetRole::ROLE_AutonomousProxy)
 			{
-				PlayerType = GameInstance->GetDefaultClientPlayerType();
+				EPType = GameInstance->GetDefaultClientPlayerType();
 			}
 		}
 	}
 
-	return PlayerType;
+	return EPType;
 }
+
+
+void ABPlayerController::OnRep_PlayerType()
+{
+	if (IsLocalPlayerController())
+	{
+		OnLocalPlayerPlayerTypeChange(PlayerType);
+	}
+}
+
+
+
+
+
+void ABPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ABPlayerController, PlayerType);
+}
+
