@@ -15,6 +15,10 @@ class BLINDTRUST_API ABPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
+public:
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 protected:
 
 	// Called when the game starts or when spawned
@@ -24,5 +28,14 @@ protected:
 
 
 	EPlayerType GetPlayerTypeFromGameInstance() const;
+
+	UPROPERTY(ReplicatedUsing = OnRep_PlayerType, BlueprintReadWrite, VisibleAnywhere)
+	EPlayerType PlayerType;
+
+	UFUNCTION()
+	void OnRep_PlayerType();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnLocalPlayerPlayerTypeChange(EPlayerType Type);
 	
 };
