@@ -3,11 +3,6 @@
 
 #include "BGameInstance.h"
 
-void UBGameInstance::SetHostPlayerType(EPlayerType PlayerType)
-{
-
-}
-
 
 void UBGameInstance::SetPlayerType(int32 PlayerId, EPlayerType PlayerType)
 {
@@ -24,5 +19,4 @@ EPlayerType UBGameInstance::GetPlayerType(int32 PlayerId) const
 	}
 
 	return EPlayerType::EPT_MAX;
-	//return EPlayerType::EPT_GuidePlayer;
 }

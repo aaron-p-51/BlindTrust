@@ -30,7 +30,35 @@ void ABPlayerController::OnPossess(APawn* InPawn)
 
 	if (GetLocalRole() == ENetRole::ROLE_Authority)
 	{
-		auto BasePlayerCharacter = Cast<ABPlayerCharacter>(InPawn);
+		if (InPawn->Tags.Contains(BLIND_PLAYER_TAG))
+		{
+			PlayerType = EPlayerType::EPT_BlindPlayer;
+			OnRep_PlayerType();
+			/*ABBlindPlayerCharacter* BlindPlayerCharacter = Cast<ABBlindPlayerCharacter>(InPawn))
+			{
+
+			}*/
+		}
+		else if (InPawn->Tags.Contains(GUIDE_PLAYER_TAG))
+		{
+			PlayerType = EPlayerType::EPT_GuidePlayer;
+			OnRep_PlayerType();
+		}
+		else
+		{
+			EPlayerType EPType = GetPlayerTypeFromGameInstance();
+			if (EPType != EPlayerType::EPT_MAX)
+			{
+				if (auto GameMode = Cast<ABGameMode>(UGameplayStatics::GetGameMode(this)))
+				{
+					GameMode->ReplacePawnForPlayer(this, EPType);
+					return;
+				}
+			}
+		}
+
+
+		/*auto BasePlayerCharacter = Cast<ABPlayerCharacter>(InPawn);
 		if (!BasePlayerCharacter)
 		{
 			EPlayerType EPType = GetPlayerTypeFromGameInstance();
@@ -53,7 +81,7 @@ void ABPlayerController::OnPossess(APawn* InPawn)
 		{
 			PlayerType = EPlayerType::EPT_BlindPlayer;
 			OnRep_PlayerType();
-		}
+		}*/
 	}
 }
 

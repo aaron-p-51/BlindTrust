@@ -21,13 +21,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EPlayerType DefaultHostPlayerType = EPlayerType::EPT_GuidePlayer;
 
-public:
-
-	void SetHostPlayerType(EPlayerType PlayerType);
 
 public:
 
+	
 	void SetPlayerType(int32 PlayerId, EPlayerType PlayerType);
+
 	EPlayerType GetPlayerType(int32 PlayerId) const;
 
 	EPlayerType GetDefaultHostPlayerType() const { return DefaultHostPlayerType; }
