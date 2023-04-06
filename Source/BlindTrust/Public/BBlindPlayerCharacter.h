@@ -14,6 +14,10 @@ class BLINDTRUST_API ABBlindPlayerCharacter : public ABPlayerCharacter
 {
 	GENERATED_BODY()
 
+public:
+
+	ABBlindPlayerCharacter();
+
 protected:
 
 	// Called when the game starts or when spawned

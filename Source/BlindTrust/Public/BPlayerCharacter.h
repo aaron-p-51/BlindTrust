@@ -21,6 +21,13 @@ protected:
 	virtual void BeginPlay() override;
 
 	/**
+	 * Components
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category ="Components")
+	class UCameraComponent* CameraComp;
+
+
+	/**
 	 * Default Player Input
 	 */
 	UPROPERTY(EditAnywhere, Category = "Input")
