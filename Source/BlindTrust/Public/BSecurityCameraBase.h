@@ -53,6 +53,8 @@ public:
 	/** Get rotation of camera component */
 	FRotator GetCameraRotation() const;
 
+	USceneCaptureComponent2D* GetCamera() const { return Camera; }
+
 private:
 
 	

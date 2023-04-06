@@ -7,6 +7,7 @@
 #include "GameFramework/PlayerController.h"
 
 #include "BlindTrustTypes.h"
+#include "BBlindPlayerCharacter.h"
 
 // Sets default values
 ABZombie::ABZombie()
@@ -49,19 +50,26 @@ void ABZombie::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void ABZombie::OnCaptureSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor && OtherActor->ActorHasTag(BLIND_PLAYER_TAG))
+	ABBlindPlayerCharacter* BlindPlayerCharacter = Cast<ABBlindPlayerCharacter>(OtherActor);
+	if (BlindPlayerCharacter)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Caught Player"));
-		APawn* p = Cast<APawn>(OtherActor);
-		if (p)
-		{
-			APlayerController* PC =	Cast<APlayerController>(p->GetController());
-			if (PC)
-			{
-				PC->SetInputMode(FInputModeUIOnly());
-			}
-		}
-
+		BlindPlayerCharacter->SetIsCaptured(true);
 	}
+
+
+	//if (OtherActor && OtherActor->ActorHasTag(BLIND_PLAYER_TAG))
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("Caught Player"));
+	//	APawn* p = Cast<APawn>(OtherActor);
+	//	if (p)
+	//	{
+	//		APlayerController* PC =	Cast<APlayerController>(p->GetController());
+	//		if (PC)
+	//		{
+	//			PC->SetInputMode(FInputModeUIOnly());
+	//		}
+	//	}
+
+	//}
 }
 

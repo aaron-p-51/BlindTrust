@@ -63,14 +63,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Yaw", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float YawInterpSpeed;
 
-	/** Capture scene at a fixed rate. If false scene will be captured every frame */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Scene Capture")
-	bool bUseFixedCaptureRate;
-
-	/** Scene capture rate */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Configuration|Scene Capture", meta = (EditCondition = "bUseFixedCaptureRate"))
-	float SceneCaptureUpdateInterval;
-
 
 private:
 
@@ -97,11 +89,6 @@ private:
 	 * Update Scene Caputre
 	 */
 
-	FTimerHandle TimerHandle_UpdateSceneCapture;
-
-	UFUNCTION()
-	void UpdateSceneCapture();
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -112,6 +99,5 @@ public:
 	FORCEINLINE void AddPitch(float Value) { PitchInput = Value; }
 	FORCEINLINE void AddYaw(float Value) { YawInput = Value; }
 
-	void SetUpdateSceneCaptureAtFixedRate(bool Value);
 
 };

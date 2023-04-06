@@ -6,6 +6,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "BSecurityCameraController.h"
 
@@ -13,6 +14,16 @@
 ABGuidePlayerCharacter::ABGuidePlayerCharacter()
 {
 	Tags.Add(GUIDE_PLAYER_TAG);
+}
+
+void ABGuidePlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (IsLocallyControlled())
+	{
+		SetupSecurityCameraController();
+	}
 }
 
 void ABGuidePlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -27,6 +38,8 @@ void ABGuidePlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	}
 
 }
+
+
 
 
 void ABGuidePlayerCharacter::SwitchCamera(const FInputActionValue& Value)
@@ -82,5 +95,19 @@ void ABGuidePlayerCharacter::SetSecurityCameraController(ABSecurityCameraControl
 		SecurityCameraController = nullptr;
 		RemoveMappingContext(SecurityCameraControlMapping);
 		UE_LOG(LogTemp, Warning, TEXT("RemoveSecurityCameraController"));
+	}
+}
+
+void ABGuidePlayerCharacter::SetupSecurityCameraController()
+{
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(this, ABSecurityCameraController::StaticClass(), FoundActors);
+	if (FoundActors.Num() == 1)
+	{
+		ABSecurityCameraController* FoundSecurityCameraController = Cast<ABSecurityCameraController>(FoundActors[0]);
+		if (FoundSecurityCameraController)
+		{
+			FoundSecurityCameraController->SetAllRenderTargetsActive(true);
+		}
 	}
 }

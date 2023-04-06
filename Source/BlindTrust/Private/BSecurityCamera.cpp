@@ -29,9 +29,6 @@ ABSecurityCamera::ABSecurityCamera()
 
 	CurrentYawOffset = 0.f;
 	CurrentPitchOffset = 0.f;
-
-	bUseFixedCaptureRate = false;
-	SceneCaptureUpdateInterval = 0.1f;
 }
 
 
@@ -59,16 +56,6 @@ void ABSecurityCamera::SetInitialValues()
 		}
 
 		Camera->AddRelativeRotation(FRotator(CurrentPitchOffset, CurrentYawOffset, 0.f));
-
-		if (!bUseFixedCaptureRate)
-		{
-			Camera->bCaptureEveryFrame = true;
-			Camera->bCaptureOnMovement = true;
-		}
-		else
-		{
-			UpdateSceneCapture();
-		}
 	}
 }
 
@@ -121,39 +108,6 @@ void ABSecurityCamera::ApplyYawInput(float DeltaTime)
 	}
 }
 
-
-void ABSecurityCamera::UpdateSceneCapture()
-{
-	if (Camera)
-	{
-		Camera->CaptureSceneDeferred();
-	}
-}
-
-
-void ABSecurityCamera::SetUpdateSceneCaptureAtFixedRate(bool Value)
-{
-	if (!bUseFixedCaptureRate) return;
-
-	if (Value)
-	{
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle_UpdateSceneCapture, this, &ABSecurityCamera::UpdateSceneCapture, SceneCaptureUpdateInterval, true);
-		if (Camera)
-		{
-			Camera->bCaptureEveryFrame = false;
-			Camera->bCaptureOnMovement = false;
-		}
-	}
-	else
-	{
-		GetWorld()->GetTimerManager().ClearTimer(TimerHandle_UpdateSceneCapture);
-		if (Camera)
-		{
-			Camera->bCaptureEveryFrame = true;
-			Camera->bCaptureOnMovement = false;
-		}
-	}
-}
 
 
 
