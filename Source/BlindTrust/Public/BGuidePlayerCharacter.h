@@ -14,6 +14,10 @@ class BLINDTRUST_API ABGuidePlayerCharacter : public ABPlayerCharacter
 {
 	GENERATED_BODY()
 
+public:
+
+	ABGuidePlayerCharacter();
+
 protected:
 
 	/**

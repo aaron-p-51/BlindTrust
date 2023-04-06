@@ -6,9 +6,12 @@
 #include "Blueprint/UserWidget.h"
 #include "Camera/CameraComponent.h"
 
+#include "BlindTrustTypes.h"
+
 ABBlindPlayerCharacter::ABBlindPlayerCharacter()
 {
 	CameraComp->SetRelativeLocationAndRotation(FVector(0.f, 0.f, 304.f), FRotator(0.f, 90.f, 0.f).Quaternion());
+	Tags.Add(BLIND_PLAYER_TAG);
 }
 
 void ABBlindPlayerCharacter::BeginPlay()

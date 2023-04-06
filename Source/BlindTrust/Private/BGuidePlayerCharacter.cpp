@@ -9,6 +9,12 @@
 
 #include "BSecurityCameraController.h"
 
+
+ABGuidePlayerCharacter::ABGuidePlayerCharacter()
+{
+	Tags.Add(GUIDE_PLAYER_TAG);
+}
+
 void ABGuidePlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);

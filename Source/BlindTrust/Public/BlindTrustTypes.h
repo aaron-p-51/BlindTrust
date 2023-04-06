@@ -18,3 +18,6 @@ enum  class EPlayerType : uint8
 
 	EPT_MAX				UMETA(DisplayName = "DefaultMax")
 };
+
+const FName BLIND_PLAYER_TAG = FName("BlindPlayer");
+const FName GUIDE_PLAYER_TAG = FName("GuidePlayer");
