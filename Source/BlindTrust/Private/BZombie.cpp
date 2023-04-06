@@ -4,6 +4,7 @@
 #include "BZombie.h"
 
 #include "Components/SphereComponent.h"
+#include "GameFramework/PlayerController.h"
 
 #include "BlindTrustTypes.h"
 
@@ -51,6 +52,16 @@ void ABZombie::OnCaptureSphereBeginOverlap(UPrimitiveComponent* OverlappedCompon
 	if (OtherActor && OtherActor->ActorHasTag(BLIND_PLAYER_TAG))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Caught Player"));
+		APawn* p = Cast<APawn>(OtherActor);
+		if (p)
+		{
+			APlayerController* PC =	Cast<APlayerController>(p->GetController());
+			if (PC)
+			{
+				PC->SetInputMode(FInputModeUIOnly());
+			}
+		}
+
 	}
 }
 
