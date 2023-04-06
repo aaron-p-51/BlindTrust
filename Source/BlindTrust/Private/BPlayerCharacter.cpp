@@ -7,6 +7,7 @@
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "Camera/CameraComponent.h"
 
 
 // Sets default values
@@ -15,12 +16,18 @@ ABPlayerCharacter::ABPlayerCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	CameraComp->SetupAttachment(GetMesh());
+	CameraComp->SetRelativeLocation(FVector(0.f, 0.f, BaseEyeHeight));
+	CameraComp->bUsePawnControlRotation = true;
+
+
 }
 
 
 // Called when the game starts or when spawned
 void ABPlayerCharacter::BeginPlay()
-{
+{	
 	Super::BeginPlay();
 	
 	ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(GetController());

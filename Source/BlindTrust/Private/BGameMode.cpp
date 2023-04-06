@@ -95,9 +95,6 @@ void ABGameMode::ReplacePawnForPlayer(APlayerController* PlayerController, EPlay
 		ControlledPawn->Destroy();
 	}
 
-	//APlayerStart* NewPlayerStart = GetPlayerStartForPlayerType(PlayerType);
-	//FTransform SpawnTransform = NewPlayerStart->GetTransform();
-
 	if (PlayerType == EPlayerType::EPT_BlindPlayer)
 	{
 		GetAllBlindPlayerStarts();
@@ -105,7 +102,6 @@ void ABGameMode::ReplacePawnForPlayer(APlayerController* PlayerController, EPlay
 		FTransform BlindPlayerSpawnTransform;
 		if (GetBlindPlayerStart(BlindPlayerSpawnTransform))
 		{
-			
 			auto BlindCharacter = Cast<ABBlindPlayerCharacter>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, BlindPlayerCharacterClass, BlindPlayerSpawnTransform, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn));
 			if (BlindCharacter)
 			{
@@ -113,27 +109,6 @@ void ABGameMode::ReplacePawnForPlayer(APlayerController* PlayerController, EPlay
 				PlayerController->Possess(Cast<APawn>(BlindCharacter));
 			}
 		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("No Blind Player Start"));
-		}
-
-
-		/*auto BlindCharacter = Cast<ABBlindPlayerCharacter>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, BlindPlayerCharacterClass, SpawnTransform, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn));
-		if (BlindCharacter)
-		{
-
-			if (GetBlindPlayerStart(BlindPlayerSpawnTransform))
-			{
-				UGameplayStatics::FinishSpawningActor(BlindCharacter, BlindPlayerSpawnTransform);
-			}
-			else
-			{
-				UE_LOG(LogTemp, Error, TEXT("Unable to find spawn point for Blind Player"));
-			}
-		}*/
-
-		
 	}
 	else if (PlayerType == EPlayerType::EPT_GuidePlayer)
 	{

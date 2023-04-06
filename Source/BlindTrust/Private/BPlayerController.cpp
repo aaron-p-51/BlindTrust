@@ -57,6 +57,7 @@ void ABPlayerController::OnPossess(APawn* InPawn)
 	}
 }
 
+
 EPlayerType ABPlayerController::GetPlayerTypeFromGameInstance() const
 {
 	EPlayerType EPType = EPlayerType::EPT_MAX;
@@ -67,9 +68,10 @@ EPlayerType ABPlayerController::GetPlayerTypeFromGameInstance() const
 		{
 			EPType = GameInstance->GetPlayerType(BPlayerState->GetPlayerId());
 		}
+
+		// If EPType is EPT_MAX that we never set it, playing in th editor, use default player
 		if (EPType == EPlayerType::EPT_MAX)
 		{
-			// Is Server
 			if (GetRemoteRole() == ENetRole::ROLE_SimulatedProxy)
 			{
 				EPType = GameInstance->GetDefaultHostPlayerType();
@@ -92,9 +94,6 @@ void ABPlayerController::OnRep_PlayerType()
 		OnLocalPlayerPlayerTypeChange(PlayerType);
 	}
 }
-
-
-
 
 
 void ABPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
