@@ -11,9 +11,28 @@
 #include "BBlindPlayerCharacter.h"
 #include "BGuidePlayerCharacter.h"
 #include "BBlindPlayerSpawnVolume.h"
+#include "BPlayerController.h"
 
 const FName BLIND_PLAYER_START = FName("BlindPlayerStart");
 const FName GUIDE_PLAYER_START = FName("GuidePlayerStart");
+
+
+namespace MatchState
+{
+	const FName ReplaceDefaultPawn = FName("ReplaceDefaultPawn");
+	const FName Play = FName("Play");
+}
+
+
+ABGameMode::ABGameMode()
+{
+	bDelayedStart = true;
+	bReplacedPawnForBlindPlayer = false;
+	bReplacedPawnForGuidePlayer = false;
+}
+
+
+
 
 void ABGameMode::BeginPlay()
 {
@@ -21,19 +40,37 @@ void ABGameMode::BeginPlay()
 
 	UE_LOG(LogTemp, Warning, TEXT("Begin Play GameMode"));
 
-	//GuidePlayerStart = GetGuidePlayerStart();
-	//GetAllBlindPlayerStarts();
-
-
-	//UE_LOG(LogTemp, Warning, TEXT("Found %d player starts"), PlayerStarts.Num());
-
-	//GuidePlayerStartTransform = GetGuidePlayerStart();
-
-	//GetAllPlayerStarts();
-
-	//GetAllBlindPlayerStarts();
-
 }
+
+
+
+void ABGameMode::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (MatchState == MatchState::WaitingToStart)
+	{
+		if (PlayersLogin == 2)
+		{
+			StartMatch();
+		}
+	}
+	if (MatchState == MatchState::ReplaceDefaultPawn)
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("Match State == MatchState::WaitingToStart. bRepBlind = %d, bRepGuide = %d"), bReplacedPawnForBlindPlayer, bReplacedPawnForGuidePlayer);
+		if (bReplacedPawnForBlindPlayer && bReplacedPawnForGuidePlayer)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Setting MatchState == MatchState::Play"));
+			SetMatchState(MatchState::Play);	
+			
+		}
+	}
+	else if (MatchState == MatchState::InProgress)
+	{
+
+	}
+}
+
 
 void ABGameMode::PostLogin(APlayerController* NewPlayer)
 {
@@ -41,7 +78,7 @@ void ABGameMode::PostLogin(APlayerController* NewPlayer)
 	if (!NewPlayer) return;
 
 	UE_LOG(LogTemp, Warning, TEXT("PostLogin"));
-
+	PlayersLogin++;
 
 	/*if (UBGameInstance* GameInstance = Cast<UBGameInstance>(GetGameInstance()))
 	{
@@ -85,6 +122,36 @@ void ABGameMode::PostLogin(APlayerController* NewPlayer)
 	}*/
 }
 
+void ABGameMode::OnMatchStateSet()
+{
+	Super::OnMatchStateSet();
+
+	if (MatchState == MatchState::WaitingToStart)
+	{
+		//SetMatchState(MatchState::InProgress);
+	}
+	else if (MatchState == MatchState::InProgress)
+	{
+		SetMatchState(MatchState::ReplaceDefaultPawn);
+	}
+	else if (MatchState == MatchState::Play)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MatchState == MatchState::Play in OnMatchStateSet"));
+	}
+
+	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+	{
+		ABPlayerController* BPlayerController = Cast<ABPlayerController>(*It);
+		{
+			if (BPlayerController)
+			{
+				BPlayerController->OnMatchStateSet(MatchState);
+			}
+		}
+	}
+
+
+}
 
 void ABGameMode::ReplacePawnForPlayer(APlayerController* PlayerController, EPlayerType PlayerType)
 {
@@ -107,6 +174,8 @@ void ABGameMode::ReplacePawnForPlayer(APlayerController* PlayerController, EPlay
 			{
 				UGameplayStatics::FinishSpawningActor(BlindCharacter, BlindPlayerSpawnTransform);
 				PlayerController->Possess(Cast<APawn>(BlindCharacter));
+				bReplacedPawnForBlindPlayer = true;
+
 			}
 		}
 	}
@@ -125,6 +194,7 @@ void ABGameMode::ReplacePawnForPlayer(APlayerController* PlayerController, EPlay
 			UE_LOG(LogTemp, Warning, TEXT("Spawning Guide Player"));
 			UGameplayStatics::FinishSpawningActor(GuideCharacter, GuidePlayerStart->GetActorTransform());
 			PlayerController->Possess(Cast<APawn>(GuideCharacter));
+			bReplacedPawnForGuidePlayer = true;
 		}
 		else
 		{
@@ -133,6 +203,11 @@ void ABGameMode::ReplacePawnForPlayer(APlayerController* PlayerController, EPlay
 	}
 }
 
+
+void ABGameMode::BlindPlayerCaught()
+{
+	SetMatchState(MatchState::WaitingPostMatch);
+}
 
 void ABGameMode::GetAllBlindPlayerStarts()
 {
@@ -178,8 +253,6 @@ APlayerStart* ABGameMode::GetGuidePlayerStart() const
 
 bool ABGameMode::GetBlindPlayerStart(FTransform& StartTransform) const
 {
-
-
 	int32 Attempts = 0;
 	while (Attempts < GetBlindPlayerStartAttempts)
 	{

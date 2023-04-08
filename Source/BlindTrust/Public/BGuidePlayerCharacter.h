@@ -56,7 +56,7 @@ public:
 
 private:
 
-	void SetupSecurityCameraController();
+	//void SetupSecurityCameraController();
 
 	
 };

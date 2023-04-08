@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerState.h"
 #include "Net/UnrealNetwork.h"
+#include "Blueprint/UserWidget.h"
 
 #include "BPlayerCharacter.h"
 #include "BGameInstance.h"
@@ -14,6 +15,7 @@
 
 #include "BBlindPlayerCharacter.h"
 #include "BGuidePlayerCharacter.h"
+#include "BSecurityCameraController.h"
 
 
 void ABPlayerController::BeginPlay()
@@ -91,15 +93,61 @@ void ABPlayerController::OnRep_PlayerType()
 {
 	if (IsLocalPlayerController())
 	{
-		OnLocalPlayerPlayerTypeChange(PlayerType);
+		if (PlayerType == EPlayerType::EPT_GuidePlayer)
+		{
+			TArray<AActor*> FoundActors;
+			UGameplayStatics::GetAllActorsOfClass(this, ABSecurityCameraController::StaticClass(), FoundActors);
+			if (FoundActors.Num() == 1)
+			{
+				ABSecurityCameraController* FoundSecurityCameraController = Cast<ABSecurityCameraController>(FoundActors[0]);
+				if (FoundSecurityCameraController)
+				{
+					FoundSecurityCameraController->SetAllRenderTargetsActive(true);
+				}
+			}
+		}
 	}
 }
 
+
+void ABPlayerController::OnMatchStateSet(FName State)
+{
+	MatchState = State;
+	OnRep_MatchState();
+}
+
+
+void ABPlayerController::OnRep_MatchState()
+{
+	if (MatchState == MatchState::WaitingPostMatch)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Blind Player Caught!!!"));
+		ShowGameOver();
+	}
+}
+
+
+void ABPlayerController::ShowGameOver()
+{
+	if (!GameOverWidget)
+	{
+		GameOverWidget = CreateWidget<UUserWidget>(this, GameOverWidgetClass);
+	}
+	if (GameOverWidget)
+	{
+		GameOverWidget->AddToViewport();
+		SetInputMode(FInputModeUIOnly());
+	}
+}
 
 void ABPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ABPlayerController, PlayerType);
+	DOREPLIFETIME(ABPlayerController, MatchState);
 }
+
+
+
 

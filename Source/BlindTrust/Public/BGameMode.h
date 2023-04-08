@@ -7,6 +7,12 @@
 #include "BlindTrustTypes.h"
 #include "BGameMode.generated.h"
 
+namespace MatchState
+{
+	extern BLINDTRUST_API const FName ReplaceDefaultPawn;
+	extern BLINDTRUST_API const FName Play;
+}
+
 /**
  * 
  */
@@ -19,6 +25,7 @@ protected:
 
 	virtual void BeginPlay() override;
 
+	int32 PlayersLogin = 0;
 
 	UPROPERTY()
 	TArray<class ABBlindPlayerSpawnVolume*> BlindPlayerStarts;
@@ -35,14 +42,22 @@ protected:
 	UPROPERTY()
 	class APlayerStart* GuidePlayerStart;
 
+	virtual void OnMatchStateSet() override;
+
 protected:
 
 
 public:
 
+	ABGameMode();
+
+	virtual void Tick(float DeltaTime) override;
+
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
 	void ReplacePawnForPlayer(APlayerController* PlayerController, EPlayerType PlayerType);
+
+	void BlindPlayerCaught();
 
 private:
 
@@ -52,6 +67,8 @@ private:
 
 	bool GetBlindPlayerStart(FTransform& StartTransform) const;
 	
+	bool bReplacedPawnForBlindPlayer;
+	bool bReplacedPawnForGuidePlayer;
 	
 
 	

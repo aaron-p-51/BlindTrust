@@ -8,6 +8,7 @@
 
 #include "BlindTrustTypes.h"
 #include "BBlindPlayerCharacter.h"
+#include "BGameMode.h"
 
 // Sets default values
 ABZombie::ABZombie()
@@ -54,6 +55,11 @@ void ABZombie::OnCaptureSphereBeginOverlap(UPrimitiveComponent* OverlappedCompon
 	if (BlindPlayerCharacter)
 	{
 		BlindPlayerCharacter->SetIsCaptured(true);
+		ABGameMode* BGameMode = Cast<ABGameMode>(GetWorld()->GetAuthGameMode());
+		if (BGameMode)
+		{
+			BGameMode->BlindPlayerCaught();
+		}
 	}
 
 

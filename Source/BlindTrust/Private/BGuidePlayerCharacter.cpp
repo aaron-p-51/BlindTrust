@@ -20,10 +20,10 @@ void ABGuidePlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (IsLocallyControlled())
-	{
-		SetupSecurityCameraController();
-	}
+	//if (IsLocallyControlled())
+	//{
+	//	GetWorld()->GetTimerManager().SetTimerForNextTick(this, &ABGuidePlayerCharacter::SetupSecurityCameraController);
+	//}
 }
 
 void ABGuidePlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -98,16 +98,16 @@ void ABGuidePlayerCharacter::SetSecurityCameraController(ABSecurityCameraControl
 	}
 }
 
-void ABGuidePlayerCharacter::SetupSecurityCameraController()
-{
-	TArray<AActor*> FoundActors;
-	UGameplayStatics::GetAllActorsOfClass(this, ABSecurityCameraController::StaticClass(), FoundActors);
-	if (FoundActors.Num() == 1)
-	{
-		ABSecurityCameraController* FoundSecurityCameraController = Cast<ABSecurityCameraController>(FoundActors[0]);
-		if (FoundSecurityCameraController)
-		{
-			FoundSecurityCameraController->SetAllRenderTargetsActive(true);
-		}
-	}
-}
+//void ABGuidePlayerCharacter::SetupSecurityCameraController()
+//{
+//	TArray<AActor*> FoundActors;
+//	UGameplayStatics::GetAllActorsOfClass(this, ABSecurityCameraController::StaticClass(), FoundActors);
+//	if (FoundActors.Num() == 1)
+//	{
+//		ABSecurityCameraController* FoundSecurityCameraController = Cast<ABSecurityCameraController>(FoundActors[0]);
+//		if (FoundSecurityCameraController)
+//		{
+//			FoundSecurityCameraController->SetAllRenderTargetsActive(true);
+//		}
+//	}
+//}
