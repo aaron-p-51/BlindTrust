@@ -117,12 +117,38 @@ void ABPlayerController::OnMatchStateSet(FName State)
 }
 
 
+void ABPlayerController::ReturnToLobby()
+{
+	if (GetLocalRole() != ENetRole::ROLE_Authority)
+	{
+		ServerReturnToLobby();
+		return;
+	}
+
+	ABGameMode* BGameMode = Cast<ABGameMode>(GetWorld()->GetAuthGameMode());
+	if (BGameMode)
+	{
+		BGameMode->PlayerRequestToReturnToLobby(this);
+	}
+
+}
+
+
+void ABPlayerController::ServerReturnToLobby_Implementation()
+{
+	ReturnToLobby();
+}
+
 void ABPlayerController::OnRep_MatchState()
 {
 	if (MatchState == MatchState::WaitingPostMatch)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Blind Player Caught!!!"));
-		ShowGameOver();
+
+		if (IsLocalPlayerController())
+		{
+			ShowGameOver();
+		}
 	}
 }
 
@@ -137,6 +163,7 @@ void ABPlayerController::ShowGameOver()
 	{
 		GameOverWidget->AddToViewport();
 		SetInputMode(FInputModeUIOnly());
+		bShowMouseCursor = true;
 	}
 }
 

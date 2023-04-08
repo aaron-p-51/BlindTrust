@@ -21,6 +21,12 @@ public:
 
 	void OnMatchStateSet(FName State);
 
+	UFUNCTION(BlueprintCallable)
+	void ReturnToLobby();
+
+	UFUNCTION(Server, Reliable)
+	void ServerReturnToLobby();
+
 protected:
 
 	

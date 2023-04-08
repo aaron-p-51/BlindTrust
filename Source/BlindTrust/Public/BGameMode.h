@@ -59,6 +59,8 @@ public:
 
 	void BlindPlayerCaught();
 
+	void PlayerRequestToReturnToLobby(APlayerController* PlayerController);
+
 private:
 
 
@@ -69,6 +71,9 @@ private:
 	
 	bool bReplacedPawnForBlindPlayer;
 	bool bReplacedPawnForGuidePlayer;
+
+	UPROPERTY()
+	TSet<int32> RequestLeavePlayerIDs;
 	
 
 	

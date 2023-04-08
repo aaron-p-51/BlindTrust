@@ -5,6 +5,7 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerStart.h"
+#include "GameFramework/PlayerState.h"
 
 #include "BGameInstance.h"
 
@@ -203,10 +204,24 @@ void ABGameMode::ReplacePawnForPlayer(APlayerController* PlayerController, EPlay
 	}
 }
 
-
 void ABGameMode::BlindPlayerCaught()
 {
 	SetMatchState(MatchState::WaitingPostMatch);
+}
+
+void ABGameMode::PlayerRequestToReturnToLobby(APlayerController* PlayerController)
+{
+	APlayerState* PlayerState = PlayerController->GetPlayerState<APlayerState>();
+	if (PlayerState)
+	{
+		int32 PlayerId = PlayerState->GetPlayerId();
+		RequestLeavePlayerIDs.Add(PlayerId);
+	}
+
+	if (RequestLeavePlayerIDs.Num() == 2)
+	{
+		GetWorld()->ServerTravel(FString("/Game/BlindTrust/Maps/Lobby?listen"));
+	}
 }
 
 void ABGameMode::GetAllBlindPlayerStarts()
@@ -232,7 +247,6 @@ void ABGameMode::GetAllBlindPlayerStarts()
 
 }
 
-
 APlayerStart* ABGameMode::GetGuidePlayerStart() const
 {
 	TArray<AActor*> FoundActors;
@@ -249,7 +263,6 @@ APlayerStart* ABGameMode::GetGuidePlayerStart() const
 
 	return nullptr;
 }
-
 
 bool ABGameMode::GetBlindPlayerStart(FTransform& StartTransform) const
 {
