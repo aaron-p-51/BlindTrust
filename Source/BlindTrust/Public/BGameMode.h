@@ -39,6 +39,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class ABGuidePlayerCharacter> GuidePlayerCharacterClass;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class ABZombie> ZombieCharacterClass;
+
 	UPROPERTY()
 	class APlayerStart* GuidePlayerStart;
 
@@ -67,13 +70,19 @@ private:
 	APlayerStart* GetGuidePlayerStart() const;
 	void GetAllBlindPlayerStarts();
 
-	bool GetBlindPlayerStart(FTransform& StartTransform) const;
+	bool GetBlindPlayerStart(FTransform& StartTransform);
+	void SpawnZombie();
+	bool GetZombieStart(FTransform& StartTransform);
 	
 	bool bReplacedPawnForBlindPlayer;
 	bool bReplacedPawnForGuidePlayer;
+	bool bZombieSpawned;
 
 	UPROPERTY()
 	TSet<int32> RequestLeavePlayerIDs;
+
+	UPROPERTY()
+	ABBlindPlayerSpawnVolume* SelectedBlindPlayerSpawnVolume;
 	
 
 	

@@ -13,6 +13,7 @@
 #include "BGuidePlayerCharacter.h"
 #include "BBlindPlayerSpawnVolume.h"
 #include "BPlayerController.h"
+#include "BZombie.h"
 
 const FName BLIND_PLAYER_START = FName("BlindPlayerStart");
 const FName GUIDE_PLAYER_START = FName("GuidePlayerStart");
@@ -33,16 +34,14 @@ ABGameMode::ABGameMode()
 }
 
 
-
-
 void ABGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
 	UE_LOG(LogTemp, Warning, TEXT("Begin Play GameMode"));
 
-}
 
+}
 
 
 void ABGameMode::Tick(float DeltaTime)
@@ -58,12 +57,14 @@ void ABGameMode::Tick(float DeltaTime)
 	}
 	if (MatchState == MatchState::ReplaceDefaultPawn)
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("Match State == MatchState::WaitingToStart. bRepBlind = %d, bRepGuide = %d"), bReplacedPawnForBlindPlayer, bReplacedPawnForGuidePlayer);
-		if (bReplacedPawnForBlindPlayer && bReplacedPawnForGuidePlayer)
+		if (bReplacedPawnForBlindPlayer && !bZombieSpawned)
+		{
+			SpawnZombie();
+		}
+		else if (bReplacedPawnForBlindPlayer && bReplacedPawnForGuidePlayer && bZombieSpawned)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Setting MatchState == MatchState::Play"));
 			SetMatchState(MatchState::Play);	
-			
 		}
 	}
 	else if (MatchState == MatchState::InProgress)
@@ -176,7 +177,6 @@ void ABGameMode::ReplacePawnForPlayer(APlayerController* PlayerController, EPlay
 				UGameplayStatics::FinishSpawningActor(BlindCharacter, BlindPlayerSpawnTransform);
 				PlayerController->Possess(Cast<APawn>(BlindCharacter));
 				bReplacedPawnForBlindPlayer = true;
-
 			}
 		}
 	}
@@ -264,21 +264,71 @@ APlayerStart* ABGameMode::GetGuidePlayerStart() const
 	return nullptr;
 }
 
-bool ABGameMode::GetBlindPlayerStart(FTransform& StartTransform) const
+bool ABGameMode::GetBlindPlayerStart(FTransform& StartTransform)
 {
+	if (BlindPlayerStarts.Num() == 0)
+	{
+		UE_LOG(LogTemp, Error, TEXT("No BlindPlayerSpawnVolues in map, unable to spawn BlindPlayer"));
+		return false;
+	}
 	int32 Attempts = 0;
 	while (Attempts < GetBlindPlayerStartAttempts)
 	{
-		if (ABBlindPlayerSpawnVolume* BlindPlayerSpawnVolume = BlindPlayerStarts[FMath::RandRange(0, BlindPlayerStarts.Num() - 1)])
+		ABBlindPlayerSpawnVolume* BlindPlayerSpawnVolume = BlindPlayerStarts[FMath::RandRange(0, BlindPlayerStarts.Num() - 1)];
+		if (BlindPlayerSpawnVolume && BlindPlayerSpawnVolume->GetRandomSpawnPoint(StartTransform))
 		{
-			if (BlindPlayerSpawnVolume->GetRandomSpawnPoint(StartTransform))
-			{
-				return true;
-			}
+			SelectedBlindPlayerSpawnVolume = BlindPlayerSpawnVolume;
+			return true;
 		}
 
 		++Attempts;
 	}
+
+	return false;
+}
+
+void ABGameMode::SpawnZombie()
+{
+	FTransform ZombieSpawnTransform;
+	if (GetZombieStart(ZombieSpawnTransform))
+	{
+		ABZombie* Zombie = Cast<ABZombie>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, ZombieCharacterClass, ZombieSpawnTransform, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn));
+		if (Zombie)
+		{
+			UGameplayStatics::FinishSpawningActor(Zombie, ZombieSpawnTransform);
+			bZombieSpawned = true;
+		}
+	}
+}
+
+bool ABGameMode::GetZombieStart(FTransform& StartTransform)
+{
+	if (BlindPlayerStarts.Num() == 0)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Unable to spawn Zombie. Zombie will spawn in unoccupied BlindPlayerSpawnVolume. No BlindPlayerSpawnVolumes"));
+		return false;
+	}
+
+	if (BlindPlayerStarts.Num() == 1)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Only one BlindPlayerSapwnVolume in map. Zombie and BlindPlayer will spawn in same volume"));
+		ABBlindPlayerSpawnVolume* SpawnVolume = BlindPlayerStarts[FMath::RandRange(0, BlindPlayerStarts.Num() - 1)];
+
+		return SpawnVolume && SpawnVolume->GetRandomSpawnPoint(StartTransform);
+	}
+
+	int32 Attempts = 0;
+	while (Attempts < GetBlindPlayerStartAttempts)
+	{
+		ABBlindPlayerSpawnVolume* SpawnVolume = BlindPlayerStarts[FMath::RandRange(0, BlindPlayerStarts.Num() - 1)];
+		if (SpawnVolume && SpawnVolume != SelectedBlindPlayerSpawnVolume && SpawnVolume->GetRandomSpawnPoint(StartTransform))
+		{
+			return true;	
+		}
+
+		++Attempts;
+	}
+	
 
 	return false;
 }
