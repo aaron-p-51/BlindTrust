@@ -21,9 +21,22 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EPlayerType DefaultHostPlayerType = EPlayerType::EPT_GuidePlayer;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bDebugAllowEditorSinglePlayer = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "bDebugAllowEditorSinglePlayer"))
+	bool bDebugSpawnZombieEditorSinglePlayer = false;
+
+
+
 public:
 
 	void SetHostPlayerType(EPlayerType PlayerType);
+
+	virtual void Init() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bUseVsync = true;
 
 public:
 
@@ -37,6 +50,9 @@ public:
 		else if (DefaultHostPlayerType == EPlayerType::EPT_GuidePlayer) return EPlayerType::EPT_BlindPlayer;
 		else return EPlayerType::EPT_MAX;
 	}
+
+	bool GetDebugAllowEditorSinglePlayer() const { return bDebugAllowEditorSinglePlayer; }
+	bool GetDebugSpawnZombieEditorSinglePlayer() const { return bDebugSpawnZombieEditorSinglePlayer; }
 
 private:
 

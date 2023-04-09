@@ -47,6 +47,9 @@ protected:
 
 	virtual void OnMatchStateSet() override;
 
+	UPROPERTY()
+	class UBGameInstance* GameInstance;
+
 protected:
 
 

@@ -40,6 +40,8 @@ void ABGameMode::BeginPlay()
 
 	UE_LOG(LogTemp, Warning, TEXT("Begin Play GameMode"));
 
+	GetAllBlindPlayerStarts();
+	GameInstance = Cast<UBGameInstance>(GetGameInstance());
 
 }
 
@@ -48,28 +50,53 @@ void ABGameMode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (MatchState == MatchState::WaitingToStart)
+	if (GameInstance->GetDebugAllowEditorSinglePlayer())
 	{
-		if (PlayersLogin == 2)
+		if (MatchState == MatchState::WaitingToStart)
 		{
-			StartMatch();
+			if (PlayersLogin > 0)
+			{
+				StartMatch();
+			}
 		}
-	}
-	if (MatchState == MatchState::ReplaceDefaultPawn)
-	{
-		if (bReplacedPawnForBlindPlayer && !bZombieSpawned)
+		else if (MatchState == MatchState::ReplaceDefaultPawn)
 		{
-			SpawnZombie();
-		}
-		else if (bReplacedPawnForBlindPlayer && bReplacedPawnForGuidePlayer && bZombieSpawned)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Setting MatchState == MatchState::Play"));
-			SetMatchState(MatchState::Play);	
-		}
-	}
-	else if (MatchState == MatchState::InProgress)
-	{
+			if (bReplacedPawnForGuidePlayer || bReplacedPawnForBlindPlayer)
+			{
+				if (GameInstance->GetDebugSpawnZombieEditorSinglePlayer())
+				{
+					SpawnZombie();
+				}
 
+				SetMatchState(MatchState::Play);
+			}
+		}
+	}
+	else
+	{
+		if (MatchState == MatchState::WaitingToStart)
+		{
+			if (PlayersLogin == 2)
+			{
+				StartMatch();
+			}
+		}
+		else if (MatchState == MatchState::ReplaceDefaultPawn)
+		{
+			if (bReplacedPawnForBlindPlayer && !bZombieSpawned)
+			{
+				SpawnZombie();
+			}
+			else if (bReplacedPawnForBlindPlayer && bReplacedPawnForGuidePlayer && bZombieSpawned)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Setting MatchState == MatchState::Play"));
+				SetMatchState(MatchState::Play);
+			}
+		}
+		else if (MatchState == MatchState::InProgress)
+		{
+
+		}
 	}
 }
 
@@ -166,7 +193,7 @@ void ABGameMode::ReplacePawnForPlayer(APlayerController* PlayerController, EPlay
 
 	if (PlayerType == EPlayerType::EPT_BlindPlayer)
 	{
-		GetAllBlindPlayerStarts();
+		
 
 		FTransform BlindPlayerSpawnTransform;
 		if (GetBlindPlayerStart(BlindPlayerSpawnTransform))

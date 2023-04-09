@@ -3,10 +3,18 @@
 
 #include "BGameInstance.h"
 
+void UBGameInstance::Init()
+{
+	Super::Init();
+
+}
+
 void UBGameInstance::SetHostPlayerType(EPlayerType PlayerType)
 {
 
 }
+
+
 
 
 void UBGameInstance::SetPlayerType(int32 PlayerId, EPlayerType PlayerType)

@@ -22,7 +22,17 @@ void ABPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SetInputMode(FInputModeGameOnly());
+	if (IsLocalPlayerController())
+	{
+		SetInputMode(FInputModeGameOnly());
+
+		UBGameInstance* GameInstance = Cast<UBGameInstance>(GetGameInstance());
+		if (GameInstance && GameInstance->bUseVsync)
+		{
+			GetWorld()->Exec(GetWorld(), TEXT("r.vsync 1"));
+		}
+	}
+
 }
 
 
