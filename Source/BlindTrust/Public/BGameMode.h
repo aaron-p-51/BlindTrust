@@ -7,6 +7,12 @@
 #include "BlindTrustTypes.h"
 #include "BGameMode.generated.h"
 
+namespace MatchState
+{
+	extern BLINDTRUST_API const FName ReplaceDefaultPawn;
+	extern BLINDTRUST_API const FName Play;
+}
+
 /**
  * 
  */
@@ -19,6 +25,7 @@ protected:
 
 	virtual void BeginPlay() override;
 
+	int32 PlayersLogin = 0;
 
 	UPROPERTY()
 	TArray<class ABBlindPlayerSpawnVolume*> BlindPlayerStarts;
@@ -32,17 +39,33 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class ABGuidePlayerCharacter> GuidePlayerCharacterClass;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class ABZombie> ZombieCharacterClass;
+
 	UPROPERTY()
 	class APlayerStart* GuidePlayerStart;
+
+	virtual void OnMatchStateSet() override;
+
+	UPROPERTY()
+	class UBGameInstance* GameInstance;
 
 protected:
 
 
 public:
 
+	ABGameMode();
+
+	virtual void Tick(float DeltaTime) override;
+
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
 	void ReplacePawnForPlayer(APlayerController* PlayerController, EPlayerType PlayerType);
+
+	void BlindPlayerCaught();
+
+	void PlayerRequestToReturnToLobby(APlayerController* PlayerController);
 
 private:
 
@@ -50,8 +73,19 @@ private:
 	APlayerStart* GetGuidePlayerStart() const;
 	void GetAllBlindPlayerStarts();
 
-	bool GetBlindPlayerStart(FTransform& StartTransform) const;
+	bool GetBlindPlayerStart(FTransform& StartTransform);
+	void SpawnZombie();
+	bool GetZombieStart(FTransform& StartTransform);
 	
+	bool bReplacedPawnForBlindPlayer;
+	bool bReplacedPawnForGuidePlayer;
+	bool bZombieSpawned;
+
+	UPROPERTY()
+	TSet<int32> RequestLeavePlayerIDs;
+
+	UPROPERTY()
+	ABBlindPlayerSpawnVolume* SelectedBlindPlayerSpawnVolume;
 	
 
 	

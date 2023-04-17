@@ -52,6 +52,11 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	/**
+	 * Config
+	 */
+	void SetAllRenderTargetsActive(bool Value);
+
+	/**
 	 * Input
 	 */
 	/** Input, switch camera in SecurityCameras */

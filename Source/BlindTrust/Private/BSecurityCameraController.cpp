@@ -42,12 +42,6 @@ void ABSecurityCameraController::BeginPlay()
 		InteractionVolume->OnComponentBeginOverlap.AddDynamic(this, &ABSecurityCameraController::OnInteractionVolumeBeginOverlap);
 		InteractionVolume->OnComponentEndOverlap.AddDynamic(this, &ABSecurityCameraController::OnInteractionVolumeEndOverlap);
 	}
-
-	if (Camera)
-	{
-		Camera->bCaptureEveryFrame = true;
-		Camera->bCaptureOnMovement = false;
-	}
 }
 
 
@@ -62,6 +56,18 @@ void ABSecurityCameraController::Tick(float DeltaTime)
 	}
 }
 
+
+void ABSecurityCameraController::SetAllRenderTargetsActive(bool Value)
+{
+	for (auto SecurityCamera : SecurityCameras)
+	{
+		SecurityCamera->GetCamera()->bCaptureOnMovement = Value;
+		SecurityCamera->GetCamera()->bCaptureEveryFrame = Value;
+	}
+
+	Camera->bCaptureOnMovement = Value;
+	Camera->bCaptureEveryFrame = Value;
+}
 
 void ABSecurityCameraController::SetInitialCamera()
 {
@@ -134,11 +140,7 @@ void ABSecurityCameraController::SwitchNextCamera()
 		const int32 CurrentSecurityCameraIndex = SecurityCameras.IndexOfByKey(CurrentSecurityCamera);
 		const int32 NextSecurityCameraIndex = (CurrentSecurityCameraIndex + 1) % SecurityCameras.Num();
 
-		CurrentSecurityCamera->SetUpdateSceneCaptureAtFixedRate(true);
-
 		CurrentSecurityCamera = SecurityCameras[NextSecurityCameraIndex];
-
-		CurrentSecurityCamera->SetUpdateSceneCaptureAtFixedRate(false);
 
 		if (CameraSwitchDelay > 0.f)
 		{
@@ -162,11 +164,7 @@ void ABSecurityCameraController::SwitchPreviousCamera()
 		const int32 CurrentSecurityCameraIndex = SecurityCameras.IndexOfByKey(CurrentSecurityCamera);
 		const int32 NextSecurityCameraIndex = (CurrentSecurityCameraIndex - 1 + SecurityCameras.Num()) % SecurityCameras.Num();
 
-		CurrentSecurityCamera->SetUpdateSceneCaptureAtFixedRate(true);
-
 		CurrentSecurityCamera = SecurityCameras[NextSecurityCameraIndex];
-
-		CurrentSecurityCamera->SetUpdateSceneCaptureAtFixedRate(false);
 
 		if (CameraSwitchDelay > 0.f)
 		{

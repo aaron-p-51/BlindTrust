@@ -14,7 +14,14 @@ class BLINDTRUST_API ABGuidePlayerCharacter : public ABPlayerCharacter
 {
 	GENERATED_BODY()
 
+public:
+
+	ABGuidePlayerCharacter();
+
 protected:
+
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
 	/**
 	 * Security camera control input
@@ -47,6 +54,9 @@ public:
 
 	void SetSecurityCameraController(ABSecurityCameraController* Value);
 
+private:
+
+	//void SetupSecurityCameraController();
 
 	
 };

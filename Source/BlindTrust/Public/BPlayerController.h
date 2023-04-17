@@ -19,7 +19,17 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	void OnMatchStateSet(FName State);
+
+	UFUNCTION(BlueprintCallable)
+	void ReturnToLobby();
+
+	UFUNCTION(Server, Reliable)
+	void ServerReturnToLobby();
+
 protected:
+
+	
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -37,5 +47,24 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnLocalPlayerPlayerTypeChange(EPlayerType Type);
-	
+
+	/**
+	 * Config
+	 */
+	UPROPERTY(VisibleAnywhere, Category = "Configuration")
+	UUserWidget* GameOverWidget;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Configuration")
+	TSubclassOf<UUserWidget> GameOverWidgetClass;
+
+
+private:
+
+	UPROPERTY(ReplicatedUsing = OnRep_MatchState)
+	FName MatchState;
+
+	UFUNCTION()
+	void OnRep_MatchState();
+
+	void ShowGameOver();
 };

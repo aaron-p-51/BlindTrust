@@ -6,6 +6,9 @@
 #include "BPlayerCharacter.h"
 #include "BBlindPlayerCharacter.generated.h"
 
+
+
+
 /**
  * 
  */
@@ -17,8 +20,22 @@ class BLINDTRUST_API ABBlindPlayerCharacter : public ABPlayerCharacter
 public:
 
 	ABBlindPlayerCharacter();
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	void SetIsCaptured(bool Value);
+
 
 protected:
+
+
+	/**
+	 * State
+	 */
+	UPROPERTY(ReplicatedUsing=OnRep_IsCaptured)
+	bool IsCaptured;
+
+	UFUNCTION()
+	void OnRep_IsCaptured();
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

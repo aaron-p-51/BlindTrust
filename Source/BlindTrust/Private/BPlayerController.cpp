@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerState.h"
 #include "Net/UnrealNetwork.h"
+#include "Blueprint/UserWidget.h"
 
 #include "BPlayerCharacter.h"
 #include "BGameInstance.h"
@@ -14,13 +15,24 @@
 
 #include "BBlindPlayerCharacter.h"
 #include "BGuidePlayerCharacter.h"
+#include "BSecurityCameraController.h"
 
 
 void ABPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SetInputMode(FInputModeGameOnly());
+	if (IsLocalPlayerController())
+	{
+		SetInputMode(FInputModeGameOnly());
+
+		UBGameInstance* GameInstance = Cast<UBGameInstance>(GetGameInstance());
+		if (GameInstance && GameInstance->bUseVsync)
+		{
+			GetWorld()->Exec(GetWorld(), TEXT("r.vsync 1"));
+		}
+	}
+
 }
 
 
@@ -91,15 +103,88 @@ void ABPlayerController::OnRep_PlayerType()
 {
 	if (IsLocalPlayerController())
 	{
-		OnLocalPlayerPlayerTypeChange(PlayerType);
+		if (PlayerType == EPlayerType::EPT_GuidePlayer)
+		{
+			TArray<AActor*> FoundActors;
+			UGameplayStatics::GetAllActorsOfClass(this, ABSecurityCameraController::StaticClass(), FoundActors);
+			if (FoundActors.Num() == 1)
+			{
+				ABSecurityCameraController* FoundSecurityCameraController = Cast<ABSecurityCameraController>(FoundActors[0]);
+				if (FoundSecurityCameraController)
+				{
+					FoundSecurityCameraController->SetAllRenderTargetsActive(true);
+				}
+			}
+		}
 	}
 }
 
+
+void ABPlayerController::OnMatchStateSet(FName State)
+{
+	MatchState = State;
+	OnRep_MatchState();
+}
+
+
+void ABPlayerController::ReturnToLobby()
+{
+	if (GetLocalRole() != ENetRole::ROLE_Authority)
+	{
+		ServerReturnToLobby();
+		return;
+	}
+
+	ABGameMode* BGameMode = Cast<ABGameMode>(GetWorld()->GetAuthGameMode());
+	if (BGameMode)
+	{
+		BGameMode->PlayerRequestToReturnToLobby(this);
+	}
+
+}
+
+
+void ABPlayerController::ServerReturnToLobby_Implementation()
+{
+	ReturnToLobby();
+}
+
+void ABPlayerController::OnRep_MatchState()
+{
+	if (MatchState == MatchState::WaitingPostMatch)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Blind Player Caught!!!"));
+
+		if (IsLocalPlayerController())
+		{
+			ShowGameOver();
+		}
+	}
+}
+
+
+void ABPlayerController::ShowGameOver()
+{
+	if (!GameOverWidget)
+	{
+		GameOverWidget = CreateWidget<UUserWidget>(this, GameOverWidgetClass);
+	}
+	if (GameOverWidget)
+	{
+		GameOverWidget->AddToViewport();
+		SetInputMode(FInputModeUIOnly());
+		bShowMouseCursor = true;
+	}
+}
 
 void ABPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ABPlayerController, PlayerType);
+	DOREPLIFETIME(ABPlayerController, MatchState);
 }
+
+
+
 

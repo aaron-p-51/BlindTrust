@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "BlindTrustTypes.h"
 #include "BPlayerCharacter.generated.h"
 
 UCLASS()
@@ -16,6 +17,7 @@ public:
 	// Sets default values for this character's properties
 	ABPlayerCharacter();
 
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -25,7 +27,6 @@ protected:
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category ="Components")
 	class UCameraComponent* CameraComp;
-
 
 	/**
 	 * Default Player Input
