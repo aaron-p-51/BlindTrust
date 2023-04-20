@@ -50,6 +50,9 @@ protected:
 	UPROPERTY()
 	class UBGameInstance* GameInstance;
 
+	UPROPERTY()
+	class ABBlindTrustGameState* BlindTrustGameState;
+
 protected:
 
 
@@ -81,6 +84,7 @@ private:
 	bool bReplacedPawnForGuidePlayer;
 	bool bZombieSpawned;
 	int32 BlindPlayerSpawnGroup;
+
 
 	UPROPERTY()
 	TSet<int32> RequestLeavePlayerIDs;	

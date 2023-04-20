@@ -15,6 +15,7 @@
 #include "BBlindPlayerSpawnVolume.h"
 #include "BPlayerController.h"
 #include "BZombie.h"
+#include "BBlindTrustGameState.h"
 
 const FName BLIND_PLAYER_START = FName("BlindPlayerStart");
 const FName GUIDE_PLAYER_START = FName("GuidePlayerStart");
@@ -126,10 +127,20 @@ void ABGameMode::OnMatchStateSet()
 	else if (MatchState == MatchState::Play)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("MatchState == MatchState::Play in OnMatchStateSet"));
+		BlindTrustGameState = BlindTrustGameState ? BlindTrustGameState : GetWorld()->GetGameState<ABBlindTrustGameState>();
+		if (BlindTrustGameState)
+		{
+			BlindTrustGameState->SetStartChaseTime();
+		}
 	}
-
-
-
+	else if (MatchState == MatchState::WaitingPostMatch)
+	{
+		BlindTrustGameState = BlindTrustGameState ? BlindTrustGameState : GetWorld()->GetGameState<ABBlindTrustGameState>();
+		if (BlindTrustGameState)
+		{
+			BlindTrustGameState->SetBlindPlayerCaughtTime();
+		}
+	}
 
 	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
 	{

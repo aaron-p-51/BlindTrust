@@ -28,8 +28,13 @@ private:
 
 public:
 
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE float GetStartChaseTime() const { return StartChaseTime; }
+
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE float GetBlindPlayerCaughtTime() const { return BlindPlayerCaughtTime; }
+
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE float GetSurvivalTimeDuration() const { return BlindPlayerCaughtTime - StartChaseTime; }
 
 	void SetStartChaseTime();
