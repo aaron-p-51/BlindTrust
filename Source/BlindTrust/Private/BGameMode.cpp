@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerStart.h"
 #include "GameFramework/PlayerState.h"
+#include "GameFramework/GameStateBase.h"
 
 #include "BGameInstance.h"
 
@@ -14,6 +15,7 @@
 #include "BBlindPlayerSpawnVolume.h"
 #include "BPlayerController.h"
 #include "BZombie.h"
+#include "BBlindTrustGameState.h"
 
 const FName BLIND_PLAYER_START = FName("BlindPlayerStart");
 const FName GUIDE_PLAYER_START = FName("GuidePlayerStart");
@@ -108,47 +110,6 @@ void ABGameMode::PostLogin(APlayerController* NewPlayer)
 
 	UE_LOG(LogTemp, Warning, TEXT("PostLogin"));
 	PlayersLogin++;
-
-	/*if (UBGameInstance* GameInstance = Cast<UBGameInstance>(GetGameInstance()))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("GameInstance"));
-		if (APlayerState* PlayerState = NewPlayer->GetPlayerState<APlayerState>())
-		{
-			UE_LOG(LogTemp, Warning, TEXT("PlayerState"));
-			EPlayerType PlayerType = GameInstance->GetPlayerType(PlayerState->PlayerId);
-			if (PlayerType != EPlayerType::EPT_MAX)
-			{
-				RestartPlayerAtPlayerStart(NewPlayer, GetPlayerStartForPlayerType(PlayerType));
-			}
-			else
-			{
-				APawn* Pawn = NewPlayer->GetPawn();
-				if (!Pawn)
-				{
-					UE_LOG(LogTemp, Warning, TEXT("No Pawn yet"));
-					return;
-				}
-
-				UE_LOG(LogTemp, Warning, TEXT("Remote Role: %d"), NewPlayer->GetPawn()->GetRemoteRole());
-			}
-		}
-	}*/
-
-
-
-	/*APlayerState* PlayerState = NewPlayer->GetPlayerState<APlayerState>();
-	if (PlayerState)
-	{
-		if (UBGameInstance* BGameInstance = Cast<UBGameInstance>(GetGameInstance()))
-		{
-			EPlayerType PlayerType = BGameInstance->GetPlayerType(PlayerState->PlayerId);
-			APlayerStart* PlayerStart = GetPlayerStartForPlayerType(PlayerType);
-			if (PlayerStart)
-			{
-				RestartPlayerAtPlayerStart(NewPlayer, PlayerStart);
-			}
-		}
-	}*/
 }
 
 void ABGameMode::OnMatchStateSet()
@@ -166,6 +127,19 @@ void ABGameMode::OnMatchStateSet()
 	else if (MatchState == MatchState::Play)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("MatchState == MatchState::Play in OnMatchStateSet"));
+		BlindTrustGameState = BlindTrustGameState ? BlindTrustGameState : GetWorld()->GetGameState<ABBlindTrustGameState>();
+		if (BlindTrustGameState)
+		{
+			BlindTrustGameState->SetStartChaseTime();
+		}
+	}
+	else if (MatchState == MatchState::WaitingPostMatch)
+	{
+		BlindTrustGameState = BlindTrustGameState ? BlindTrustGameState : GetWorld()->GetGameState<ABBlindTrustGameState>();
+		if (BlindTrustGameState)
+		{
+			BlindTrustGameState->SetBlindPlayerCaughtTime();
+		}
 	}
 
 	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
@@ -174,6 +148,8 @@ void ABGameMode::OnMatchStateSet()
 		{
 			if (BPlayerController)
 			{
+				AGameStateBase* GS = GetWorld()->GetGameState<AGameStateBase>();
+				float ServerTime = GS->GetServerWorldTimeSeconds();
 				BPlayerController->OnMatchStateSet(MatchState);
 			}
 		}
@@ -304,7 +280,8 @@ bool ABGameMode::GetBlindPlayerStart(FTransform& StartTransform)
 		ABBlindPlayerSpawnVolume* BlindPlayerSpawnVolume = BlindPlayerStarts[FMath::RandRange(0, BlindPlayerStarts.Num() - 1)];
 		if (BlindPlayerSpawnVolume && BlindPlayerSpawnVolume->GetRandomSpawnPoint(StartTransform))
 		{
-			SelectedBlindPlayerSpawnVolume = BlindPlayerSpawnVolume;
+			//SelectedBlindPlayerSpawnVolume = BlindPlayerSpawnVolume;
+			BlindPlayerSpawnGroup = BlindPlayerSpawnVolume->GetSpawnGroup();
 			return true;
 		}
 
@@ -348,7 +325,7 @@ bool ABGameMode::GetZombieStart(FTransform& StartTransform)
 	while (Attempts < GetBlindPlayerStartAttempts)
 	{
 		ABBlindPlayerSpawnVolume* SpawnVolume = BlindPlayerStarts[FMath::RandRange(0, BlindPlayerStarts.Num() - 1)];
-		if (SpawnVolume && SpawnVolume != SelectedBlindPlayerSpawnVolume && SpawnVolume->GetRandomSpawnPoint(StartTransform))
+		if (SpawnVolume && SpawnVolume->GetSpawnGroup() != BlindPlayerSpawnGroup && SpawnVolume->GetRandomSpawnPoint(StartTransform))
 		{
 			return true;	
 		}

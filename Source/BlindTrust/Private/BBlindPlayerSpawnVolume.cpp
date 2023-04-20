@@ -10,24 +10,10 @@
 // Sets default values
 ABBlindPlayerSpawnVolume::ABBlindPlayerSpawnVolume()
 {
-
 	SpawnVolume = CreateDefaultSubobject<UBoxComponent>(TEXT("SpawnVolume"));
 	SetRootComponent(SpawnVolume);
 	SpawnVolume->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
 }
-
-
-// Called when the game starts or when spawned
-void ABBlindPlayerSpawnVolume::BeginPlay()
-{
-	Super::BeginPlay();
-	//FTransform T;
-	//GetRandomSpawnPoint(T);
-}
-
-
-
 
 
 bool ABBlindPlayerSpawnVolume::GetRandomSpawnPoint(FTransform& SpawnTransform) const
@@ -47,9 +33,6 @@ bool ABBlindPlayerSpawnVolume::GetRandomSpawnPoint(FTransform& SpawnTransform) c
 		{
 			if (HitResult.bBlockingHit)
 			{
-				DrawDebugSphere(GetWorld(), HitResult.Location, 2.f, 12, FColor::Yellow, true);
-
-
 				SpawnTransform = FTransform(GetRandomSpawnRotation(), FVector(HitResult.Location.X, HitResult.Location.Y, HitResult.Location.Z + SpawnZAxisOffset));
 				return true;
 			}
