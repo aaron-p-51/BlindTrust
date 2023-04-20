@@ -80,13 +80,8 @@ private:
 	bool bReplacedPawnForBlindPlayer;
 	bool bReplacedPawnForGuidePlayer;
 	bool bZombieSpawned;
+	int32 BlindPlayerSpawnGroup;
 
 	UPROPERTY()
-	TSet<int32> RequestLeavePlayerIDs;
-
-	UPROPERTY()
-	ABBlindPlayerSpawnVolume* SelectedBlindPlayerSpawnVolume;
-	
-
-	
+	TSet<int32> RequestLeavePlayerIDs;	
 };

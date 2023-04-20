@@ -304,7 +304,8 @@ bool ABGameMode::GetBlindPlayerStart(FTransform& StartTransform)
 		ABBlindPlayerSpawnVolume* BlindPlayerSpawnVolume = BlindPlayerStarts[FMath::RandRange(0, BlindPlayerStarts.Num() - 1)];
 		if (BlindPlayerSpawnVolume && BlindPlayerSpawnVolume->GetRandomSpawnPoint(StartTransform))
 		{
-			SelectedBlindPlayerSpawnVolume = BlindPlayerSpawnVolume;
+			//SelectedBlindPlayerSpawnVolume = BlindPlayerSpawnVolume;
+			BlindPlayerSpawnGroup = BlindPlayerSpawnVolume->GetSpawnGroup();
 			return true;
 		}
 
@@ -348,7 +349,7 @@ bool ABGameMode::GetZombieStart(FTransform& StartTransform)
 	while (Attempts < GetBlindPlayerStartAttempts)
 	{
 		ABBlindPlayerSpawnVolume* SpawnVolume = BlindPlayerStarts[FMath::RandRange(0, BlindPlayerStarts.Num() - 1)];
-		if (SpawnVolume && SpawnVolume != SelectedBlindPlayerSpawnVolume && SpawnVolume->GetRandomSpawnPoint(StartTransform))
+		if (SpawnVolume && SpawnVolume->GetSpawnGroup() != BlindPlayerSpawnGroup && SpawnVolume->GetRandomSpawnPoint(StartTransform))
 		{
 			return true;	
 		}
