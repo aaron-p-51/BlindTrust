@@ -140,7 +140,6 @@ void ABPlayerController::ReturnToLobby()
 	{
 		BGameMode->PlayerRequestToReturnToLobby(this);
 	}
-
 }
 
 
@@ -148,6 +147,7 @@ void ABPlayerController::ServerReturnToLobby_Implementation()
 {
 	ReturnToLobby();
 }
+
 
 void ABPlayerController::OnRep_MatchState()
 {

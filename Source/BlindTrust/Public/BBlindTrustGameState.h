@@ -14,7 +14,26 @@ class BLINDTRUST_API ABBlindTrustGameState : public AGameState
 {
 	GENERATED_BODY()
 
+public:
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 private:
+
+	UPROPERTY(Replicated)
+	float StartChaseTime = 0.f;
+
+	UPROPERTY(Replicated)
+	float BlindPlayerCaughtTime = 0.f;
+
+public:
+
+	FORCEINLINE float GetStartChaseTime() const { return StartChaseTime; }
+	FORCEINLINE float GetBlindPlayerCaughtTime() const { return BlindPlayerCaughtTime; }
+	FORCEINLINE float GetSurvivalTimeDuration() const { return BlindPlayerCaughtTime - StartChaseTime; }
+
+	void SetStartChaseTime();
+	void SetBlindPlayerCaughtTime();
 
 
 	
