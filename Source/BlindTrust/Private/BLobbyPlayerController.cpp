@@ -25,6 +25,7 @@ void ABLobbyPlayerController::SetPlayerType(EPlayerType PlayerType)
 	if (GetLocalRole() == ENetRole::ROLE_Authority)
 	{
 		int32 PlayerId = GetPlayerState<APlayerState>()->GetPlayerId();
+		
 		if (auto GameMode = Cast<ABLobbyGameMode>(UGameplayStatics::GetGameMode(this)))
 		{
 			GameMode->SetHostPlayerType(PlayerId, PlayerType);
