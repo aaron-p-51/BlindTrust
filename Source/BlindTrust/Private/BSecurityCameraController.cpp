@@ -42,6 +42,9 @@ void ABSecurityCameraController::BeginPlay()
 		InteractionVolume->OnComponentBeginOverlap.AddDynamic(this, &ABSecurityCameraController::OnInteractionVolumeBeginOverlap);
 		InteractionVolume->OnComponentEndOverlap.AddDynamic(this, &ABSecurityCameraController::OnInteractionVolumeEndOverlap);
 	}
+
+	SetAllRenderTargetsActive(false);
+	
 }
 
 
