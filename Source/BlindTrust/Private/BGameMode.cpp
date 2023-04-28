@@ -110,6 +110,13 @@ void ABGameMode::PostLogin(APlayerController* NewPlayer)
 
 	UE_LOG(LogTemp, Warning, TEXT("PostLogin"));
 	PlayersLogin++;
+
+	APlayerState* PlayerState = NewPlayer->GetPlayerState<APlayerState>();
+	if (PlayerState)
+	{
+		int32 PlayerId = PlayerState->GetPlayerId();
+		UE_LOG(LogTemp, Warning, TEXT("Player with id: %d has logged on"), PlayerId);
+	}
 }
 
 void ABGameMode::OnMatchStateSet()
