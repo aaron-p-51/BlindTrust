@@ -90,4 +90,6 @@ private:
 	bool bCreateSessionOnDestroy {false};
 	int32 LastNumPublicConnections;
 	FString LastMatchType;
+
+	void PrintLog(FString& Message, bool bUseLog = true, bool bOnScreen = true) const;
 };

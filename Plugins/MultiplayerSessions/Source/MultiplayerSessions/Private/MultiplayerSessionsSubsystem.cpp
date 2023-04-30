@@ -16,6 +16,8 @@ UMultiplayerSessionsSubsystem::UMultiplayerSessionsSubsystem() :
 	if (Subsystem)
 	{
 		SessionInterface = Subsystem->GetSessionInterface();
+		FString Message = FString::Printf(TEXT("Using OnlineSubsystem: %s"), *Subsystem->GetSubsystemName().ToString());
+		PrintLog(Message);
 	}
 
 }
@@ -97,6 +99,8 @@ void UMultiplayerSessionsSubsystem::OnStartSessionComplete(FName SessionName, bo
 
 	MultiplayerOnStartSessionComplete.Broadcast(bWasSuccessful);
 }
+
+
 
 
 void UMultiplayerSessionsSubsystem::FindSessions(int32 MaxSearchResults)
@@ -197,6 +201,19 @@ void UMultiplayerSessionsSubsystem::OnDestroySessionComplete(FName SessionName, 
 	{
 		bCreateSessionOnDestroy = false;
 		CreateSession(LastNumPublicConnections, LastMatchType);
+	}
+}
+
+void UMultiplayerSessionsSubsystem::PrintLog(FString& Message, bool bUseLog /*= true*/, bool bOnScreen /*= true*/) const
+{
+	if (bOnScreen && GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, Message);
+	}
+
+	if (bUseLog)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *Message);
 	}
 }
 
