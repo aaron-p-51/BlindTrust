@@ -7,6 +7,27 @@
 #include "MultiplayerSessionsSubsystem.h" //"MultiplayerSessionsSubsystem.h"
 #include "OnlineSubsystem.h"
 
+bool UBMainMenu::Initialize()
+{
+	if (!Super::Initialize())
+	{
+		return false;
+	}
+
+	if (HostButton)
+	{
+		HostButton->OnClicked.AddDynamic(this, &UBMainMenu::HostButtonClicked);
+	}
+
+	if (JoinButton)
+	{
+		JoinButton->OnClicked.AddDynamic(this, &UBMainMenu::JoinButtonClicked);
+	}
+
+	return true;
+}
+
+
 void UBMainMenu::MenuSetup(int32 NumberOfPublicConnections /*= 4*/, FString TypeOfMatch /*= FString(TEXT("FreeForAll"))*/, FString LobbyPath /*= FString(TEXT("/Game/ThirdPerson/Maps/Lobby?listen"))*/)
 {
 	NumPublicConnections = NumberOfPublicConnections;
@@ -48,25 +69,6 @@ void UBMainMenu::MenuSetup(int32 NumberOfPublicConnections /*= 4*/, FString Type
 	}
 }
 
-bool UBMainMenu::Initialize()
-{
-	if (!Super::Initialize())
-	{
-		return false;
-	}
-
-	if (HostButton)
-	{
-		HostButton->OnClicked.AddDynamic(this, &UBMainMenu::HostButtonClicked);
-	}
-
-	if (JoinButton)
-	{
-		JoinButton->OnClicked.AddDynamic(this, &UBMainMenu::JoinButtonClicked);
-	}
-
-	return true;
-}
 
 void UBMainMenu::NativeDestruct()
 {
@@ -76,21 +78,78 @@ void UBMainMenu::NativeDestruct()
 }
 
 
-
 void UBMainMenu::OnCreateSession(bool bWasSuccessful)
 {
+	if (bWasSuccessful)
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Yellow, FString("Session created successfully"));
+		}
 
+		UWorld* World = GetWorld();
+		if (World)
+		{
+			World->ServerTravel(PathToLobby);
+		}
+	}
+	else
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, FString("Failed to create session"));
+		}
+
+		HostButton->SetIsEnabled(true);
+	}
 }
+
 
 void UBMainMenu::OnFindSessions(const TArray<FOnlineSessionSearchResult>& SearchResults, bool bWasSuccessful)
 {
+	if (MultiplayerSessionSubsystem == nullptr) return;
 
+	for (auto Result : SearchResults)
+	{
+		FString SettingsValue;
+		Result.Session.SessionSettings.Get(FName("MatchType"), SettingsValue);
+		if (SettingsValue == MatchType)
+		{
+			MultiplayerSessionSubsystem->JoinSession(Result);
+			return;
+		}
+	}
+
+	if (!bWasSuccessful || SearchResults.Num() == 0)
+	{
+		JoinButton->SetIsEnabled(true);
+	}
 }
+
 
 void UBMainMenu::OnJoinSession(EOnJoinSessionCompleteResult::Type Result)
 {
-
+	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
+	if (Subsystem)
+	{
+		IOnlineSessionPtr SessionInterface = Subsystem->GetSessionInterface();
+		if (SessionInterface.IsValid())
+		{
+			FString Address;
+			SessionInterface->GetResolvedConnectString(NAME_GameSession, Address);
+			APlayerController* PlayerController = GetGameInstance()->GetFirstLocalPlayerController();
+			if (PlayerController)
+			{
+				PlayerController->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
+			}
+		}
+	}
+	if (Result != EOnJoinSessionCompleteResult::Success)
+	{
+		JoinButton->SetIsEnabled(true);
+	}
 }
+
 
 void UBMainMenu::OnDestroySession(bool bWasSuccessful)
 {
@@ -104,15 +163,35 @@ void UBMainMenu::OnStartSession(bool bWasSuccessful)
 
 void UBMainMenu::HostButtonClicked()
 {
-
+	HostButton->SetIsEnabled(false);
+	if (MultiplayerSessionSubsystem)
+	{
+		MultiplayerSessionSubsystem->CreateSession(NumPublicConnections, MatchType);
+	}
 }
 
 void UBMainMenu::JoinButtonClicked()
 {
-
+	JoinButton->SetIsEnabled(false);
+	if (MultiplayerSessionSubsystem)
+	{
+		MultiplayerSessionSubsystem->FindSessions(10000);
+	}
 }
 
 void UBMainMenu::MenuTearDown()
 {
+	RemoveFromParent();
 
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		APlayerController* PlayerController = World->GetFirstPlayerController();
+		if (PlayerController)
+		{
+			FInputModeGameOnly InputModeData;
+			PlayerController->SetInputMode(InputModeData);
+			PlayerController->SetShowMouseCursor(false);
+		}
+	}
 }
