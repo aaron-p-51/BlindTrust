@@ -24,5 +24,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetHostPlayerType(int32 HostPlayerId, EPlayerType PlayerType);
+
+public:
+	virtual void PostLogin(APlayerController* NewPlayer) override;
 	
 };
