@@ -303,7 +303,7 @@ void ABGameMode::SpawnZombie()
 	FTransform ZombieSpawnTransform;
 	if (GetZombieStart(ZombieSpawnTransform))
 	{
-		ABZombie* Zombie = Cast<ABZombie>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, ZombieCharacterClass, ZombieSpawnTransform, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn));
+		ACharacter* Zombie = Cast<ACharacter>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, ZombieCharacterClass, ZombieSpawnTransform, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn));
 		if (Zombie)
 		{
 			UGameplayStatics::FinishSpawningActor(Zombie, ZombieSpawnTransform);

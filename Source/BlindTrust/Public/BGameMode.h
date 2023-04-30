@@ -40,7 +40,7 @@ protected:
 	TSubclassOf<class ABGuidePlayerCharacter> GuidePlayerCharacterClass;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<class ABZombie> ZombieCharacterClass;
+	TSubclassOf<class ACharacter> ZombieCharacterClass;
 
 	UPROPERTY()
 	class APlayerStart* GuidePlayerStart;
