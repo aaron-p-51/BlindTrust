@@ -51,13 +51,14 @@ void ABLobbyGameMode::PostLogin(APlayerController* NewPlayer)
 	Super::PostLogin(NewPlayer);
 
 	int32 NumberOfPlayers = GameState.Get()->PlayerArray.Num();
-	if (NumberOfPlayers == 2)
+	if (NumberOfPlayers == 1)
 	{
 		UWorld* World = GetWorld();
 		if (World)
 		{
 			//bUseSeamlessTravel = true;
-			World->ServerTravel(FString("/Game/Developers/AaronPetrek/Collections/Maps/DevTestingMap?listen"/*"/Game/Maps/BlasterMap?listen"*/));
+			//World->ServerTravel(FString("/Game/Developers/AaronPetrek/Collections/Maps/DevTestingMap?listen"/*"/Game/Maps/BlasterMap?listen"*/));
+			World->ServerTravel(FString("/Game/Maps/ZombieChase-01-BSP?listen"));
 			/// Script / Engine.World'/Game/Developers/AaronPetrek/Collections/Maps/DevTestingMap.DevTestingMap'
 		}
 	}
