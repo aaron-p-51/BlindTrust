@@ -5,6 +5,7 @@
 
 #include "GameFramework/PlayerState.h"
 #include "BGameInstance.h"
+#include "GameFramework/GameStateBase.h"
 
 void ABLobbyGameMode::GetPlayerIds()
 {
@@ -42,5 +43,23 @@ void ABLobbyGameMode::SetHostPlayerType(int32 HostPlayerId, EPlayerType HostPlay
 	{
 		GameInstance->SetPlayerType(HostPlayerId, HostPlayerType);
 		GameInstance->SetPlayerType(ClientPlayerId, ClientPlayerType);
+	}
+}
+
+void ABLobbyGameMode::PostLogin(APlayerController* NewPlayer)
+{
+	Super::PostLogin(NewPlayer);
+
+	int32 NumberOfPlayers = GameState.Get()->PlayerArray.Num();
+	if (NumberOfPlayers == 1)
+	{
+		UWorld* World = GetWorld();
+		if (World)
+		{
+			//bUseSeamlessTravel = true;
+			//World->ServerTravel(FString("/Game/Developers/AaronPetrek/Collections/Maps/DevTestingMap?listen"/*"/Game/Maps/BlasterMap?listen"*/));
+			World->ServerTravel(FString("/Game/Maps/ZombieChase-01-BSP?listen"));
+			/// Script / Engine.World'/Game/Developers/AaronPetrek/Collections/Maps/DevTestingMap.DevTestingMap'
+		}
 	}
 }
