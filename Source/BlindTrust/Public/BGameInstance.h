@@ -38,12 +38,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bUseVsync = true;
 
+
 public:
 
 	void SetPlayerType(int32 PlayerId, EPlayerType PlayerType);
 	EPlayerType GetPlayerType(int32 PlayerId) const;
 
+	UFUNCTION(BlueprintPure)
 	EPlayerType GetDefaultHostPlayerType() const { return DefaultHostPlayerType; }
+
+	UFUNCTION(BlueprintPure)
 	EPlayerType GetDefaultClientPlayerType() const
 	{
 		if (DefaultHostPlayerType == EPlayerType::EPT_BlindPlayer) return EPlayerType::EPT_GuidePlayer;
@@ -51,7 +55,10 @@ public:
 		else return EPlayerType::EPT_MAX;
 	}
 
+	UFUNCTION(BlueprintPure)
 	bool GetDebugAllowEditorSinglePlayer() const { return bDebugAllowEditorSinglePlayer; }
+
+	UFUNCTION(BlueprintPure)
 	bool GetDebugSpawnZombieEditorSinglePlayer() const { return bDebugSpawnZombieEditorSinglePlayer; }
 
 private:
